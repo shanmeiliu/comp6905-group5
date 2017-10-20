@@ -63,15 +63,18 @@ var pages = [];
 pages.push(new staticWebResponse("./style.css","./static/style.css"));
 pages.push( new staticWebResponse("./index.html","./static/index.html"));
 pages.push( new staticWebResponse("./","./static/index.html"));
-pages.push( new staticWebResponse("./user.html","./static/user.html"));
+
+pages.push( new staticWebResponse("./voter.html","./static/voter.html"));
 pages.push( new staticWebResponse("./vote.html","./static/vote.html"));
+pages.push( new staticWebResponse("./voterthankyou.html","./static/voterthankyou.html"));
+pages.push( new staticWebResponse("./directions_polling_station.html","./static/directions_polling_station.html"));
+
 pages.push( new staticWebResponse("./party.html","./static/party.html"));
 pages.push( new staticWebResponse("./party_enroll.html","./static/party_enroll.html"));
 pages.push( new staticWebResponse("./new_election.html","./static/new_election"));
 pages.push( new staticWebResponse("./election_results.html","./static/election_results.html"));
 pages.push( new staticWebResponse("./candidate.html","./static/candidate.html"));
 pages.push( new staticWebResponse("./admin.html","./static/admin.html"));
-
 
 const server = http.createServer((req, res) => {
 	var q = url.parse(req.url, true);

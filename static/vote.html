@@ -1,29 +1,25 @@
 
 <!DOCTYPE html>
 <html>
-  <head>
-	  <link rel="stylesheet" type="text/css" href="./style.css">
-	  <title> Everyone's Voting System </title>
-  </head>
- 
+<head>
+<link rel="stylesheet" type="text/css" href="./style.css">
+<title>Everyone's Voting System</title>
+</head>
 
 <body>
-  <div id=body2>
-    <h1> Voting System </h1>
-    <h2> Vote in Canaidan National Election 2019</h2>
-    <form>
-      <label for="name" >Election name:</label> <input type="text" id="name"><br> 
-      <label for="start_date" >Polls open date:</label> <input type="date" id="start_date"><br> 
-      <label for="end_date" >Polls close date:</label> <input type="date" id="end_date"><br>
-      <label for="rule" >Rule Set to use</label>
-        <select name="rule">
-          <option value="1">Presidential</option>
-          <option value="2">Parlimentary</option>
-          <option value="3">Proportional Representation</option>
-          <option value="4">Ranked Ballots</option>
-        </select> 
+	<div id=body2>
 
-    </form>
-  </div>
+		<div id=body3>
+			<h1>Voting System</h1>
+			<h2>Vote in Canaidan National Election 2019</h2>
+			<form action="./voterthankyou.html">
+				<input type="radio" name="candidate" value="a"> Andrian Fiech<br /> 
+				<input type="radio" name="candidate" value="b">	Justin Trudeau<br />
+				<input type="radio" name="candidate" value="c">	Andrew Scheer<br /> 
+				<input type="radio" name="candidate" value="d">	Jagmeet Singh<br /> 
+				<input type="submit">
+			</form>
+		</div>
+	</div>
 </body>
 </html>
