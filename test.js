@@ -61,6 +61,7 @@ class staticWebResponse extends WebResponse{
 
 var pages = [];
 pages.push(new staticWebResponse("./style.css","./static/style.css"));
+pages.push(new staticWebResponse("./favicon.ico","./static/favicon.ico"));
 pages.push( new staticWebResponse("./index.html","./static/index.html"));
 pages.push( new staticWebResponse("./","./static/index.html"));
 
