@@ -11,57 +11,17 @@ fs = require("fs");
 const hostname = '127.0.0.1';
 const port = 8080;
 
-// maps file extention to MIME typere
-const ext_map = {
-  '.ico': 'image/x-icon',
-  '.html': 'text/html',
-  '.js': 'text/javascript',
-  '.json': 'application/json',
-  '.css': 'text/css',
-  '.png': 'image/png',
-  '.jpg': 'image/jpeg',
-  '.wav': 'audio/wav',
-  '.mp3': 'audio/mpeg',
-  '.svg': 'image/svg+xml',
-  '.pdf': 'application/pdf',
-  '.doc': 'application/msword'
-};
+const WebResponse = require('./web-response.js');
+const staticWebResponse = require('./static-web-response.js');
 
-class WebResponse {
-	constructor(page) {
-		this.page = page;
-	}
-
-	check_hit(page){
-		return(this.page == page)
-	}
-	response(req, res) {
-	}
-}
-
-class staticWebResponse extends WebResponse{
-
-	constructor(page, file) {
-		super(page);
-		this.file = file;
-
-	}
-	
-	response(req, res){
-		var content_type = ext_map[path.parse(this.file).ext];
-		  fs.readFile(this.file, function(err, data ) {
-			    res.writeHead(200, {'Content-Type': content_type});
-			    res.write(data);
-			    res.end();
-			  })
-	}
-
-}
-
+const RegistrationWebResponse = require('./registration-web-response.js'); 
 
 var pages = [];
-pages.push(new staticWebResponse("./style.css","./static/style.css"));
-pages.push(new staticWebResponse("./favicon.ico","./static/favicon.ico"));
+
+//pages.push( new RegistrationWebResponse("./register.html"));
+
+pages.push( new staticWebResponse("./style.css","./static/style.css"));
+pages.push( new staticWebResponse("./favicon.ico","./static/favicon.ico"));
 pages.push( new staticWebResponse("./index.html","./static/index.html"));
 pages.push( new staticWebResponse("./","./static/index.html"));
 
@@ -89,7 +49,6 @@ pages.push( new staticWebResponse("./candidate.html","./static/candidate.html"))
 const server = http.createServer((req, res) => {
 	var q = url.parse(req.url, true);
 	var filename = "." + q.pathname;
-	
 
 	var hit = false;
 	var pageLength = pages.length;
@@ -106,7 +65,6 @@ const server = http.createServer((req, res) => {
 		res.setHeader('Content-Type', 'text/plain');
 		res.end('Hello World\n');
 	}
-	
 });
 
 server.listen(port, hostname, () => {
