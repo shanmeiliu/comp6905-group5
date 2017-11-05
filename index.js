@@ -8,17 +8,20 @@ path = require("path"),
 url = require("url"),
 fs = require("fs");
 
+
+
 const hostname = '127.0.0.1';
 const port = 8080;
 
 const WebResponse = require('./web-response.js');
 const staticWebResponse = require('./static-web-response.js');
-
 const RegistrationWebResponse = require('./registration-web-response.js'); 
+const Accounts = require('./accounts.js');
+
 
 var pages = [];
 
-//pages.push( new RegistrationWebResponse("./register.html"));
+pages.push( new RegistrationWebResponse("./register.html"));
 
 pages.push( new staticWebResponse("./style.css","./static/style.css"));
 pages.push( new staticWebResponse("./favicon.ico","./static/favicon.ico"));
@@ -43,8 +46,6 @@ pages.push( new staticWebResponse("./party_enroll.html","./static/party_enroll.h
 
 //Candidate pages
 pages.push( new staticWebResponse("./candidate.html","./static/candidate.html"));
-
-
 
 const server = http.createServer((req, res) => {
 	var q = url.parse(req.url, true);
