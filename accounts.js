@@ -82,6 +82,16 @@ class Accounts{
 		}
 		return false;
 	}
+	
+	get_account(username){
+		for(var i = 0; i < this.userlist.length; i++){
+			if (this.userlist[i].check_username(username)){
+				return this.userlist[i];
+			}
+		}
+		console.log("Account not found")
+		return null;
+	}
 }
 
 class Account{

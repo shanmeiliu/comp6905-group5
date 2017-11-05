@@ -23,6 +23,8 @@ var failure_message = `
 
 var login_form = `
 <p><form action=\"" + this.page + "\" method=\"POST\">
+
+	<input type="hidden" name="election_create" value="true">
 	<input type=\"hidden\" name=\"login\" value=\"true\">
 	<label for=\"username\">Username:</label><input type=\"text\" name=\"username\"> <br />
 	<label for=\"password\">Password:</label><input type=\"password\" name=\"password\"> <br />
@@ -57,19 +59,29 @@ class LoginWebResponse extends WebResponse{
 						var sessions = new Sessions();
 						var session_id = sessions.create_session(data.username);
 						
+						//redirect to login page and close this reponse
 						res.setHeader('Set-Cookie', ['session_id='+session_id]);
+						res.writeHead(302, {'Location': './menu.html'});
+						res.end();
+						
+						return;
+/*						res.setHeader('Set-Cookie', ['session_id='+session_id]);
 						res.writeHead(200, {'Content-Type': 'text/html'});
 						template = template.replace("BODY_TEXT", success_message);
-						template = template.replace(/TITLE_TEXT/g , "Create New Account");
+						template = template.replace(/TITLE_TEXT/g , "Create New Account");*/
 					}
 					else{
 						res.writeHead(200, {'Content-Type': 'text/html'});
 						template = template.replace("BODY_TEXT", failure_message+login_form);
 						template = template.replace(/TITLE_TEXT/g , "Log Into System");
+						res.write(template);
+						res.end();
+						
+						return;
 					}
 				}
-
-				res.write(template);
+				
+				res.writeHead(302, {'Location': './login.html'});
 				res.end();
 			});
 		}

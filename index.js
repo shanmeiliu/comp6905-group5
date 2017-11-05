@@ -14,9 +14,12 @@ const hostname = '127.0.0.1';
 const port = 8080;
 
 const WebResponse = require('./web-response.js');
-const staticWebResponse = require('./static-web-response.js');
-const RegistrationWebResponse = require('./registration-web-response.js'); 
-const LoginWebResponse = require('./login-web-response.js'); 
+const staticWebResponse = require('./web-response-static.js');
+const RegistrationWebResponse = require('./web-response-registration.js'); 
+const LoginWebResponse = require('./web-response-login.js'); 
+const MenuWebResponse = require('./web-response-menu.js');
+const ElectionCreateWebResponse = require('./web-response-election-create.js')
+
 const Accounts = require('./accounts.js');
 
 
@@ -24,6 +27,8 @@ var pages = [];
 
 pages.push( new RegistrationWebResponse("./register.html"));
 pages.push( new LoginWebResponse("./login.html"));
+pages.push( new MenuWebResponse("./menu.html"));
+pages.push( new ElectionCreateWebResponse("./election_create.html"));
 
 pages.push( new staticWebResponse("./style.css","./static/style.css"));
 pages.push( new staticWebResponse("./favicon.ico","./static/favicon.ico"));

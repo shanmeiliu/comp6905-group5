@@ -38,9 +38,14 @@ class Sessions{
 		return session_id;
 	}
 	
+	/*
+	 *  check_session
+	 *  	Checks if session id is valid considering the context
+	 *  	only removes expired session if session id is matching
+	 */
 	check_session( session_id ){
+		var date = (new Date()).getTime();
 		for(var i = 0; i < this.sessions.length; i++){
-			var date = (new Date()).getTime();
 			if( this.sessions[i].session_id == session_id){
 				if(date < this.sessions[i].expires){
 					return true
@@ -52,6 +57,20 @@ class Sessions{
 				}
 			} 
 		}
+	}
+	
+	/*
+	 *  get_session_user
+	 *  	Assumes you have confirmed session before search
+	 *  	does not check if session has expired
+	 */
+	get_session_user ( session_id ){
+		for(var i = 0; i < this.sessions.length; i++){
+			if( this.sessions[i].session_id == session_id){
+				return this.sessions[i].username;
+			}
+		}
+		return null;
 	}
 	
 	save_JSON(){
