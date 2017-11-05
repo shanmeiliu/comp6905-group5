@@ -73,6 +73,15 @@ class Accounts{
 			this.userlist.push(new_account);
 		}
 	}
+	
+	check_login(username, password){
+		for(var i = 0; i < this.userlist.length; i++){
+			if (this.userlist[i].check_login(username,password)){
+				return true;
+			}
+		}
+		return false;
+	}
 }
 
 class Account{
@@ -81,7 +90,7 @@ class Account{
 		this.password = password;
 	}
 	
-	check_credentials( username, passwrord){
+	check_login( username, password){
 		if((username.toLowerCase() === this.username) && (password === this.password)){
 			return true;
 		}

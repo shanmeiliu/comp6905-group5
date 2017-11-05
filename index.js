@@ -16,18 +16,21 @@ const port = 8080;
 const WebResponse = require('./web-response.js');
 const staticWebResponse = require('./static-web-response.js');
 const RegistrationWebResponse = require('./registration-web-response.js'); 
+const LoginWebResponse = require('./login-web-response.js'); 
 const Accounts = require('./accounts.js');
 
 
 var pages = [];
 
 pages.push( new RegistrationWebResponse("./register.html"));
+pages.push( new LoginWebResponse("./login.html"));
 
 pages.push( new staticWebResponse("./style.css","./static/style.css"));
 pages.push( new staticWebResponse("./favicon.ico","./static/favicon.ico"));
 pages.push( new staticWebResponse("./index.html","./static/index.html"));
-pages.push( new staticWebResponse("./","./static/index.html"));
 
+
+pages.push( new staticWebResponse("./","./static/index.html"));
 //voter pages
 pages.push( new staticWebResponse("./voter.html","./static/voter.html"));
 pages.push( new staticWebResponse("./vote.html","./static/vote.html"));

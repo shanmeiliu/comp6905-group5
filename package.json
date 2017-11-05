@@ -1,0 +1,19 @@
+{
+  "name": "comp6905-group5",
+  "version": "1.0.0",
+  "description": "Course Project for COMP 6905, horribly insecure proof of concept",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/tordre/comp6905-group5.git"
+  },
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/tordre/comp6905-group5/issues"
+  },
+  "homepage": "https://github.com/tordre/comp6905-group5#readme"
+}
