@@ -134,22 +134,3 @@ class Candidate extends Account{
 }
 
 module.exports = Accounts;
-
-/*var bob = new Accounts();
-
-bob.create_account("test1","password","voter");
-bob.create_account("test2","password","voter");
-bob.create_account("test3","password","voter");
-bob.create_account("test4","password","voter");
-bob.create_account("test5","password","voter");
-bob.create_account("test6","password","voter");
-bob.create_account("test7","password","voter");
-bob.create_account("test8","password","voter");
-bob.create_account("test9","password","voter");
-bob.create_account("test10","password","candidate");
-bob.create_account("admin","password","election_commission");
-bob.create_account("party1","password","party");
-bob.create_account("party2","password","party");
-bob.create_account("party3","password","party");
-
-console.log(bob.save_JSON());*/
