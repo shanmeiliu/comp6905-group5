@@ -71,6 +71,19 @@ class MenuWebResponse extends WebResponse{
 		
 		switch(account.type){
 			case 'voter':
+				var html_list = "";
+				html_list += "<h2> Vote in Active Elections </h2>";
+				
+				html_list += "<form action=\"election_vote.html\" method=\"get\">";
+				html_list += `<input type="hidden" name="election_vote" value="true">`;
+				
+				var tuple_list = elections.list_elections_votable();
+				for(var i = 0; i < tuple_list.length; i++){
+					html_list += "<input type=\"radio\" name=\"elections\" value=\""+ tuple_list[i].session_id + "\">" + tuple_list[i].name + "</input><br/>";
+				}
+				html_list += `<input type="submit" value"submit">`;
+				html_list += "</form>";
+				
 				template = template.replace("BODY_TEXT", "Voter");
 				template = template.replace(/TITLE_TEXT/g , "Voter Main Menu");
 				
@@ -86,7 +99,7 @@ class MenuWebResponse extends WebResponse{
 				html_list += "<h2> View Results of Elections </h2>";
 				
 				html_list += "<form action=\"election_modify.html\" method=\"get\">";
-				html_list += `<input type="hidden" name="modify_election" value"true">`;
+				html_list += `<input type="hidden" name="modify_election" value="true">`;
 				
 				var tuple_list = elections.list_elections_all();
 				for(var i = 0; i < tuple_list.length; i++){
@@ -112,12 +125,12 @@ class MenuWebResponse extends WebResponse{
 				html_list += "<h2> Nominate Party in Active Elections </h2>";
 				
 				html_list += "<form action=\"nominate_party.html\" method=\"get\">";
-				html_list += `<input type="hidden" name="nominate_party" value"true">`;
 				
 				var tuple_list = elections.list_elections_nominatable();
 				for(var i = 0; i < tuple_list.length; i++){
-					html_list += "<input type=\"radio\" name=\"elections\" value=\""+ tuple_list[i].session_id + "\">" + tuple_list[i].name + "</input><br/>";
+					html_list += "<input type=\"radio\" name=\"election_id\" value=\""+ tuple_list[i].election_id + "\">" + tuple_list[i].name + "</input><br/>";
 				}
+				html_list += `<input type="hidden" name="nominate_party" value="true">`;
 				html_list += `<input type="submit" value"Submit">`;
 				html_list += "</form>";
 				

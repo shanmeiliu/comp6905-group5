@@ -7,6 +7,7 @@
 const fs = require("fs");
 const keygen = require("random-key");
 
+
 class Elections{
 	constructor(){
 		this.elections = [];
@@ -35,6 +36,13 @@ class Elections{
 		}
 	}
 	
+	list_ridings(election_id){
+		for(var i = 0; i < this.elections.length; i++){
+			if( this.elections[i].election_id == election_id){
+				return this.elections[i].list_ridings();
+			} 
+		}
+	}
 	
 	list_elections_all(){
 		var list = [];
@@ -65,6 +73,7 @@ class Elections{
 		return list;
 	}
 	
+	
 	//early form of persistence
 	save_JSON(){
 		fs.writeFile("./data_store/elections.json", JSON.stringify(this.elections), function(err) {
@@ -78,7 +87,15 @@ class Elections{
 	load_JSON(){
 		var a = JSON.parse(fs.readFileSync( "./data_store/elections.json", 'utf8'));
 		for(var i = 0; i < a.length; i++){
-			this.elections.push(a[i]);
+			var election = new Election(a[i].election_id, a[i].name, a[i].date_start, a[i].date_end, a[i].date_register);
+			
+			for(var j = 0; j <  a[i].ridings.length; j++){
+				var riding = new Riding( a[i].ridings[j].riding_id, a[i].ridings[j].name);
+				riding.candidates = a[i].ridings[j].candidates;
+				election.ridings.push(riding);
+			}
+			
+			this.elections.push(election);
 		}
 	}
 }
@@ -99,6 +116,26 @@ class Election{
 		this.votes = [];
 	}
 	
+	list_ridings(){
+		var list= [];
+		for(var i = 0; i < this.ridings.length; i++){
+			list.push({ 'riding_id' : this.ridings[i].riding_id, 'name' : this.ridings[i].name });
+		}
+		return list;
+	}
+	
+	get_riding(riding_id){
+		for(var i = 0; i < this.ridings.length; i++){
+			if( this.ridings[i].riding_id == riding_id){
+				return this.ridings[i]
+			} 
+		}
+	}
+	
+	/*
+	 * add_riding
+	 *     singular adding of riding, generates a key.
+	 */
 	add_riding(name){
 		var riding_id = keygen.generate(32);
 		
@@ -114,13 +151,9 @@ class Election{
 		for(var i = 0; i < names.length; i++){
 			this.add_riding(names[i]);
 		}
-	}
-	
-	get_ridings(){
-		
-	}
-	
+	}	
 }
+
 /*
 class Vote{
 	constructor(id, Voter){
@@ -138,7 +171,11 @@ class Riding {
 		
 		this.candidates= [];
 	}
-
+	
+    add_candidate(name, party){
+		var candidate_id = keygen.generate(32);
+		this.candidates.push(new Candidate(candidate_id, name, party));
+    }
     list_candidates(){
     	
     }
@@ -148,11 +185,22 @@ class Riding {
     }
 }
 
-var bob = new Elections();
+class Candidate{
+	constructor(candidate_id, name, party){
+		this.candidate_id = candidate_id;
+		this.name = name;
+		this.party = party;
+	}
+}
 
-console.log(bob.list_elections_all());
+
+//var bob = new Elections();
+
+//console.log(bob.get_election("TMqnTN8i04TRsQAeVfrcWtEoD1FTu13h"));
+
+//console.log(bob.list_elections_all());
 //console.log(bob.list_elections_votable());
-console.log(bob.list_elections_nominatable());
+//console.log(bob.list_elections_nominatable());
 
 /*
 var start_date = (new Date(2016, 11, 1)).getTime();

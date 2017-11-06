@@ -18,8 +18,8 @@ const staticWebResponse = require('./web-response-static.js');
 const RegistrationWebResponse = require('./web-response-registration.js'); 
 const LoginWebResponse = require('./web-response-login.js'); 
 const MenuWebResponse = require('./web-response-menu.js');
-const ElectionCreateWebResponse = require('./web-response-election-create.js')
-
+const ElectionCreateWebResponse = require('./web-response-election-create.js');
+const RegisterPartyWebResponse = require('./web-response-election-register-party.js');
 const Accounts = require('./accounts.js');
 
 
@@ -29,6 +29,7 @@ pages.push( new RegistrationWebResponse("./register.html"));
 pages.push( new LoginWebResponse("./login.html"));
 pages.push( new MenuWebResponse("./menu.html"));
 pages.push( new ElectionCreateWebResponse("./election_create.html"));
+pages.push( new RegisterPartyWebResponse("./nominate_party.html"));
 
 pages.push( new staticWebResponse("./style.css","./static/style.css"));
 pages.push( new staticWebResponse("./favicon.ico","./static/favicon.ico"));
