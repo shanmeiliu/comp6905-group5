@@ -51,25 +51,47 @@ class RegistrationWebResponse extends WebResponse{
 
 			req.on('end', function() {
 				var data = qs.parse(body);
-				console.log(body);
 				
-				res.writeHead(200, {'Content-Type': 'text/html'});
+				//Response Strings
+				var template = fs.readFileSync( "./templates/template.html", 'utf8');
+				var html_message = "";
+				var err_message = "";
+				var title_message = "";
 				
+						
 				if(data.register === "true"){
-					console.log("Registration attempted for user " + data.username);
-					var accounts = new Accounts();
+					var username = data.username;
+					var password = data.password;
 					
-					//TODO verify input
-					var template = fs.readFileSync( "./templates/template.html", 'utf8');
-					if (accounts.create_account(data.username,data.password,data.usertype)){
-						template = template.replace("BODY_TEXT", success_message);
-						template = template.replace(/TITLE_TEXT/g , "Account Created Successfully");
+					if( (username == "") || (password == "") ){
+						title_message = "ERROR";
+						err_message += "Invalid form GET data for register";
+						html_message += "<p>Invalid form GET data for register</p>";						
 					}
-					else{
-						template = template.replace("BODY_TEXT", failure_message);
-						template = template.replace(/TITLE_TEXT/g , "Account Creation Failed");
-					}
+					else{						
+						console.log("Registration attempted for user " + data.username);
+						var accounts = new Accounts();
+
+						if (accounts.create_account(data.username,data.password,data.usertype)){
+							title_message = "Account Created Successfully";
+							html_message +=`<p>User Created Succesfully</p>`;
+						}
+						else{
+							title_message = "ERROR";
+							err_message += "User already exists";
+							html_message += "<p>User already exists</p>";
+						}						
+					}					
+					console.log(err_message);
+					html_message += `<p><a href="./menu.html">Return to main menu</a></p>`;
+					
+					template = template.replace("BODY_TEXT", html_message);
+					template = template.replace(/TITLE_TEXT/g , title_message);
+					
+					res.writeHead(200, {'Content-Type': 'text/html'});
 					res.write(template);
+					res.end();
+					
 				}
 				res.end();
 			});
