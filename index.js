@@ -11,8 +11,12 @@ const fs = require("fs")
 //Local Requires
 const WebResponse = require('./web-response.js');
 const staticWebResponse = require('./web-response-static.js');
+
+//User Account cases;
 const RegistrationWebResponse = require('./web-response-registration.js'); 
 const LoginWebResponse = require('./web-response-login.js'); 
+const LogoutWebResponse = require('./web-response-logout.js');
+
 const MenuWebResponse = require('./web-response-menu.js');
 const ElectionCreateWebResponse = require('./web-response-election-create.js');
 const PartyRegisterWebResponse = require('./web-response-party-register.js');
@@ -33,6 +37,7 @@ pages.push( new MenuWebResponse("./index.html"));
 pages.push( new MenuWebResponse("./"));
 
 pages.push( new LoginWebResponse("./login.html"));
+pages.push( new LogoutWebResponse("./logout.html"));
 pages.push( new RegistrationWebResponse("./register.html"));
 
 pages.push( new ElectionCreateWebResponse("./election_create.html"));

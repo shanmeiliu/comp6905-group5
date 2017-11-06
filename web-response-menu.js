@@ -68,108 +68,89 @@ class MenuWebResponse extends WebResponse{
 		}
 		account = accounts.get_account(sessions.get_session_user(cookies.session_id));
 		var template = fs.readFileSync( "./templates/template.html", 'utf8');
+		var title_message = "";
+		var html_message = "";
+		var err_message = "";
 		
 		switch(account.type){
 			case 'voter':
-				var html_list = "";
-				html_list += "<h2> Vote in Active Elections </h2>";
-				
-				html_list += "<form action=\"election_vote.html\" method=\"get\">";
-				html_list += `<input type="hidden" name="election_vote" value="true">`;
+				title_message = "Voter Main Menu"					
+				html_message += "<h2> Vote in Active Elections </h2>";
+				html_message += "<form action=\"election_vote.html\" method=\"get\">";
+				html_message += `<input type="hidden" name="election_vote" value="true">`;
 				
 				var tuple_list = elections.list_elections_votable();
 				for(var i = 0; i < tuple_list.length; i++){
-					html_list += "<input type=\"radio\" name=\"election_id\" value=\""+ tuple_list[i].election_id + "\">" + tuple_list[i].name + "</input><br/>";
+					html_message += "<input type=\"radio\" name=\"election_id\" value=\""+ tuple_list[i].election_id + "\">" + tuple_list[i].name + "</input><br/>";
 				}
-				html_list += `<input type="submit" value"submit">`;
-				html_list += "</form>";
-				
-				template = template.replace("BODY_TEXT", html_list);
-				template = template.replace(/TITLE_TEXT/g , "Voter Main Menu");
-				
-				res.writeHead(200, {'Content-Type': 'text/html'});
-				res.write(template);
-				res.end();
-				
+				html_message += `<input type="submit" value"submit">`;
+				html_message += "</form>";
 				break;
 				
 			case 'election_commission':
+				title_message = "Election Commission Main Menu";
 				
-				var html_list = "";
-				html_list += "<h2> View Results of Elections </h2>";
-				
-				html_list += "<form action=\"election_modify.html\" method=\"get\">";
-				html_list += `<input type="hidden" name="modify_election" value="true">`;
+				html_message += "<h2> View Results of Elections </h2>";
+				html_message += "<form action=\"election_modify.html\" method=\"get\">";
+				html_message += `<input type="hidden" name="modify_election" value="true">`;
 				
 				var tuple_list = elections.list_elections_all();
 				for(var i = 0; i < tuple_list.length; i++){
-					html_list += "<input type=\"radio\" name=\"election_id\" value=\""+ tuple_list[i].election_id + "\">" + tuple_list[i].name + "</input><br/>";
+					html_message += "<input type=\"radio\" name=\"election_id\" value=\""+ tuple_list[i].election_id + "\">" + tuple_list[i].name + "</input><br/>";
 				}
-				html_list += `<input type="submit" value"Modify">`;
-				html_list += "</form>";
+				html_message += `<input type="submit" value"Modify">`;
+				html_message += "</form>";
 				
-				html_list += "<h2> Create a New Elections </h2>";
-				html_list += create_election_form;
-				
-				template = template.replace("BODY_TEXT", html_list);
-				template = template.replace(/TITLE_TEXT/g , "Election Commission Main Menu");
-				
-				res.writeHead(200, {'Content-Type': 'text/html'});
-				res.write(template);
-				res.end();
-				
+				html_message += "<h2> Create a New Elections </h2>";
+				html_message += create_election_form;				
 				break;
 				
 			case 'party':
-				var html_list = "";
-				html_list += "<h2> Nominate Party in Active Elections </h2>";
+				title_message = "Party Main Menu";
+				html_message += "<h2> Nominate Party in Active Elections </h2>";
 				
-				html_list += "<form action=\"nominate_party.html\" method=\"get\">";
+				html_message += "<form action=\"nominate_party.html\" method=\"get\">";
 				
 				var tuple_list = elections.list_elections_nominatable();
 				for(var i = 0; i < tuple_list.length; i++){
-					html_list += "<input type=\"radio\" name=\"election_id\" value=\""+ tuple_list[i].election_id + "\">" + tuple_list[i].name + "</input><br/>";
+					html_message += "<input type=\"radio\" name=\"election_id\" value=\""+ tuple_list[i].election_id + "\">" + tuple_list[i].name + "</input><br/>";
 				}
-				html_list += `<input type="hidden" name="nominate_party" value="true">`;
-				html_list += `<input type="submit" value"Submit">`;
-				html_list += "</form>";
-				
-				template = template.replace("BODY_TEXT", html_list);
-				template = template.replace(/TITLE_TEXT/g , "Party Main Menu");
-				
-				res.writeHead(200, {'Content-Type': 'text/html'});
-				res.write(template);
-				res.end();
+				html_message += `<input type="hidden" name="nominate_party" value="true">`;
+				html_message += `<input type="submit" value"Submit">`;
+				html_message += "</form>";
 				break;
 				
 			case 'candidate':
-				var html_list = "";
-				html_list += "<h2>Register to Run in Active Election</h2>";
+				title_message = "Candidate Main Menu";
+				html_message += "<h2>Register to Run in Active Election</h2>";
 				
-				html_list += "<form action=\"election_register_candidate.html\" method=\"get\">";
-				html_list += `<input type="hidden" name="election_register_candidate" value="true">`;
+				html_message += "<form action=\"election_register_candidate.html\" method=\"get\">";
+				html_message += `<input type="hidden" name="election_register_candidate" value="true">`;
 				
 				var tuple_list = elections.list_elections_votable();
 				for(var i = 0; i < tuple_list.length; i++){
-					html_list += "<input type=\"radio\" name=\"election_id\" value=\""+ tuple_list[i].election_id + "\">" + tuple_list[i].name + "</input><br/>";
+					html_message += "<input type=\"radio\" name=\"election_id\" value=\""+ tuple_list[i].election_id + "\">" + tuple_list[i].name + "</input><br/>";
 				}
-				html_list += `<input type="submit" value"submit">`;
-				html_list += "</form>";
-				
-				template = template.replace("BODY_TEXT", html_list);
-				template = template.replace(/TITLE_TEXT/g , "Candidate Main Menu");
-				
-				res.writeHead(200, {'Content-Type': 'text/html'});
-				res.write(template);
-				res.end();
-				
+				html_message += `<input type="submit" value"submit">`;
+				html_message += "</form>";				
 				break;
 			default:
 				console.log("Session ID invalid")
 				res.writeHead(302, {'Location': './login.html'});
 				res.end();
+				return
 				break;
 		}
+
+		console.log(err_message);
+		html_message += `<p><a href="./logout.html">Logout from System</a></p>`;
+		
+		template = template.replace("BODY_TEXT", html_message);
+		template = template.replace(/TITLE_TEXT/g , title_message);
+		
+		res.writeHead(200, {'Content-Type': 'text/html'});
+		res.write(template);
+		res.end();
 	}
 }
 
