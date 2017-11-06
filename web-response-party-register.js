@@ -68,63 +68,84 @@ class PartyRegisterWebResponse extends WebResponse{
 		var url_parts = url.parse(req.url, true);
 		var query = url_parts.query;
 
+		//Response Strings
+		var template = fs.readFileSync( "./templates/template.html", 'utf8');
+		var html_message = "";
+		var err_message = "";
+		var title_message = "";
+		
 		if(query.nominate_party == "true")
 		{
 			var election_id = query.election_id;
-			var ridings_list = elections.get_election(election_id).list_ridings();
-			
-			var template = fs.readFileSync( "./templates/template.html", 'utf8');
-			var html = "<p> Please enter the names of your candidates in the listed ridings please leave blank any places you have no one running";
-			
-			html += "";
 
-			html += "<form action=\"nominate_party.html\" method=\"get\">";
-			for(var i = 0; i < ridings_list.length; i++){
-				html += "<label for= \"" + ridings_list[i].riding_id + "\">"+ ridings_list[i].name + " :</label><input type=\"text=\" name=\"" + ridings_list[i].riding_id + "\"> <br> \n";
+			if(election_id == null){
+				title_message = "ERROR";
+				err_message += "Invalid form GET data for nominate_party";
+				html_message += "<p>Invalid form GET data for nominate_party</p>";
 			}
-			
-			html += `<input type="hidden" name="election_id" value="` + election_id + `">`;
-			html += `<input type="hidden" name="nominate_party_list" value="true">`;
-			html += `<input type="submit" value"Submit">`;
-			html += "</form>";
-						
-			template = template.replace("BODY_TEXT", html);
-			template = template.replace(/TITLE_TEXT/g , "Register your Candidates");
-			
-			res.writeHead(200, {'Content-Type': 'text/html'});
-			res.write(template);
-			res.end();
+			else{
+				var ridings_list = elections.get_election(election_id).list_ridings();
+
+				title_message = "Register your Candidates";
+				html_message +=  "<p> Please enter the names of your candidates in the listed ridings please leave blank any places you have no one running";
+				html_message += "<form action=\"nominate_party.html\" method=\"get\">";
+				for(var i = 0; i < ridings_list.length; i++){
+					html_message += "<label for= \"" + ridings_list[i].riding_id + "\">"+ ridings_list[i].name + " :</label><input type=\"text=\" name=\"" + ridings_list[i].riding_id + "\"> <br> \n";
+				}
+				html_message += `<input type="hidden" name="election_id" value="` + election_id + `">`;
+				html_message += `<input type="hidden" name="nominate_party_list" value="true">`;
+				html_message += `<input type="submit" value"Submit">`;
+				html_message += "</form>";
+			}
 		}
 		else if (query.nominate_party_list == "true"){			
 			var election_id = query.election_id;
-			var ridings_list = elections.get_election(election_id).list_ridings();
-
-
-			var accounts = new Accounts();
-			var account = accounts.get_account(sessions.get_session_user(cookies.session_id));
+			var session_id = cookies.session_id;
 			
-			for(var i = 0; i < ridings_list.length; i++){				
-				if( query[ridings_list[i].riding_id] ){
-					elections.get_election(election_id).get_riding(ridings_list[i].riding_id).add_candidate(query[ridings_list[i].riding_id], account.username);
-				}	
+			if( (election_id == null) || (session_id == null) ){
+				title_message = "ERROR";
+				err_message += "Invalid form GET data for nominate_party_list";
+				html_message += "<p>Invalid form GET data for nominate_party_list</p>";
 			}
-			elections.save_JSON();
-
-			var template = fs.readFileSync( "./templates/template.html", 'utf8');
-			var html = `<p> Candidates Successfully Registered for upcoming election</p><P> <a href="./menu.html">Return to main menu</a></p>`;
-			
-			template = template.replace("BODY_TEXT", html);
-			template = template.replace(/TITLE_TEXT/g , "Candidates Registered");
-			
-			res.writeHead(200, {'Content-Type': 'text/html'});
-			res.write(template);
-			res.end();
+			else{
+				
+				var ridings_list = elections.get_election(election_id).list_ridings();	
+	
+				var accounts = new Accounts();
+				var account = accounts.get_account(sessions.get_session_user(session_id));
+				
+				for(var i = 0; i < ridings_list.length; i++){				
+					if( query[ridings_list[i].riding_id] ){
+						elections.get_election(election_id).get_riding(ridings_list[i].riding_id).add_candidate(query[ridings_list[i].riding_id], account.username);
+					}	
+				}
+				elections.save_JSON();
+	
+				title_message = "Candidates Registered";
+				html_message += `<p> Candidates Successfully Registered for upcoming election</p>`;
+			}
 		}
-		else
-		{
-			res.writeHead(302, {'Location': './menu.html'});
-			res.end();
+		else{
+			title_message = "Register Party in Active Elections";
+			html_message += "<form action=\"nominate_party.html\" method=\"get\">";
+			var election_list = elections.list_elections_nominatable();
+			for(var i = 0; i < election_list.length; i++){
+				html_message += "<input type=\"radio\" name=\"election_id\" value=\""+ election_list[i].election_id + "\">" + election_list[i].name + "</input><br/>";
+			}
+			html_message += `<input type="hidden" name="nominate_party" value="true">`;
+			html_message += `<input type="submit" value"Submit">`;
 		}
+		
+		console.log(err_message);
+		html_message += `<p><a href="./menu.html">Return to main menu</a></p>`;
+		
+		template = template.replace("BODY_TEXT", html_message);
+		template = template.replace(/TITLE_TEXT/g , title_message);
+		
+		res.writeHead(200, {'Content-Type': 'text/html'});
+		res.write(template);
+		res.end();
+		
 	}
 }
 

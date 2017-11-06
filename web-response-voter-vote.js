@@ -47,10 +47,12 @@ class VoterVoteWebResponse extends WebResponse{
 		var url_parts = url.parse(req.url, true);
 		var query = url_parts.query;
 
+		//Response Strings
 		var template = fs.readFileSync( "./templates/template.html", 'utf8');
 		var html_message = "";
 		var err_message = "";
 		var title_message = "";
+		
 		if(query.election_vote == "true")
 		{
 			var election_id = query.election_id;
