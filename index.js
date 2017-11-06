@@ -2,10 +2,9 @@
  *  index.js
  *  	The main HTTP Server 
  */
-const  url = require('url');
+const url = require('url');
 const http = require("http");
 const path = require("path");
-const url = require("url");
 const fs = require("fs")
 
 
