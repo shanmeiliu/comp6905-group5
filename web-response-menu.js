@@ -144,7 +144,7 @@ class MenuWebResponse extends WebResponse{
 				
 			case 'candidate':
 				var html_list = "";
-				html_list += "<h2> Vote in Active Elections </h2>";
+				html_list += "<h2>Register to Run in Active Election</h2>";
 				
 				html_list += "<form action=\"election_register_candidate.html\" method=\"get\">";
 				html_list += `<input type="hidden" name="election_register_candidate" value="true">`;
@@ -157,7 +157,7 @@ class MenuWebResponse extends WebResponse{
 				html_list += "</form>";
 				
 				template = template.replace("BODY_TEXT", html_list);
-				template = template.replace(/TITLE_TEXT/g , "Voter Main Menu");
+				template = template.replace(/TITLE_TEXT/g , "Candidate Main Menu");
 				
 				res.writeHead(200, {'Content-Type': 'text/html'});
 				res.write(template);
