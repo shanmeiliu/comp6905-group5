@@ -29,7 +29,8 @@ var login_form = `
 	<label for=\"username\">Username:</label><input type=\"text\" name=\"username\"> <br />
 	<label for=\"password\">Password:</label><input type=\"password\" name=\"password\"> <br />
 	<input type=\"submit\" value=\"Submit\">
-</form></p>`;
+</form></p>
+<p><a href='./register.html'>Need an account? Register here.</a></p>`;
 
 
 class LoginWebResponse extends WebResponse{

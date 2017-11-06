@@ -1,0 +1,108 @@
+/*
+ * Registration Web Response
+ * 		extends Web Response
+ * Returns the registration page and handles processing of the form results
+ * 
+ */
+//built in modules
+const qs = require('querystring');
+const url = require('url');
+const fs = require("fs");
+
+//local modules
+const WebResponse = require('./web-response.js');
+const Accounts = require('./accounts.js');
+const Sessions = require('./sessions.js');
+const Elections = require('./elections.js');
+
+//function modules
+const parse_cookies = require('./parse_cookies.js');
+
+class CandidateRegisterWebResponse extends WebResponse{
+	
+	constructor(page, file) {
+		super(page);
+	}
+	
+	response(req, res){	
+		var sessions = new Sessions();
+		var elections = new Elections();
+		
+		//Redirect to login if not logged in
+		var cookies = parse_cookies(req);
+		if( cookies.hasOwnProperty('session_id')){
+			console.log('Session ID found in cookie');
+			if(sessions.check_session(cookies.session_id)){
+				console.log("Session ID valid")
+			}else{
+				//redirect to login page and close this response
+				console.log("Session ID invalid")
+				res.writeHead(302, {'Location': './login.html'});
+				res.end();
+				return false;
+			}
+		}
+		
+		//Parse GET variables
+		var url_parts = url.parse(req.url, true);
+		var query = url_parts.query;
+
+		if(query.election_register_candidate == "true")
+		{
+			var election_id = query.election_id;
+			var ridings_list = elections.get_election(election_id).list_ridings();
+			
+			var template = fs.readFileSync( "./templates/template.html", 'utf8');
+			var html = "<p> Please select the ridding you are running in</P>";
+			
+			html += "";
+
+			html += "<form action=\"election_register_candidate.html\" method=\"get\">";
+			for(var i = 0; i < ridings_list.length; i++){
+				html += "<input type=\"radio\" name=\"riding_id\" value=\""+ ridings_list[i].riding_id + "\">" + ridings_list[i].name + "</input><br/>";
+			}
+			
+			html += `<input type="hidden" name="election_id" value="` + election_id + `">`;
+			html += `<input type="hidden" name="election_register_candidate_riding" value="true">`;
+			html += `<input type="submit" value"Submit">`;
+			html += "</form>";
+						
+			template = template.replace("BODY_TEXT", html);
+			template = template.replace(/TITLE_TEXT/g , "Choose Your Riding");
+			
+			res.writeHead(200, {'Content-Type': 'text/html'});
+			res.write(template);
+			res.end();
+		}
+		else if (query.election_register_candidate_riding == "true"){
+			var template = fs.readFileSync( "./templates/template.html", 'utf8');
+			var html = ``;
+			
+			var election_id = query.election_id;	
+			var riding_id = query.riding_id;
+
+			var accounts = new Accounts();
+			var account = accounts.get_account(sessions.get_session_user(cookies.session_id));
+			
+			elections.get_election(election_id).get_riding(riding_id).add_candidate( account.username, "Independant" );
+			elections.save_JSON();
+						
+			html = `<p> Thank you for Registering for the upcoming election</p><P> <a href="./menu.html">Return to main menu</a></p>`;
+			
+			
+			template = template.replace("BODY_TEXT", html);
+			template = template.replace(/TITLE_TEXT/g , "Registered as a Canadidate");
+			
+			res.writeHead(200, {'Content-Type': 'text/html'});
+			res.write(template);
+			res.end();
+		}
+		else
+		{
+			res.writeHead(302, {'Location': './menu.html'});
+			res.end();
+		}
+	}
+}
+
+module.exports = CandidateRegisterWebResponse;

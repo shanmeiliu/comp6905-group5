@@ -21,6 +21,9 @@ const MenuWebResponse = require('./web-response-menu.js');
 const ElectionCreateWebResponse = require('./web-response-election-create.js');
 const RegisterPartyWebResponse = require('./web-response-election-register-party.js');
 const VoterVoteWebResponse = require('./web-response-election-vote.js');
+const CandidateRegisterWebResponse = require('./web-response-election-register-candidate.js');
+
+
 const Accounts = require('./accounts.js');
 
 
@@ -29,9 +32,12 @@ var pages = [];
 pages.push( new RegistrationWebResponse("./register.html"));
 pages.push( new LoginWebResponse("./login.html"));
 pages.push( new MenuWebResponse("./menu.html"));
+pages.push( new MenuWebResponse("./index.html"));
+pages.push( new MenuWebResponse("./"));
 pages.push( new ElectionCreateWebResponse("./election_create.html"));
 pages.push( new RegisterPartyWebResponse("./nominate_party.html"));
 pages.push( new VoterVoteWebResponse("./election_vote.html"));
+pages.push( new CandidateRegisterWebResponse("./election_register_candidate.html"));
 
 pages.push( new staticWebResponse("./style.css","./static/style.css"));
 pages.push( new staticWebResponse("./favicon.ico","./static/favicon.ico"));
