@@ -18,27 +18,6 @@ const Elections = require('./elections.js');
 //function modules
 const parse_cookies = require('./parse_cookies.js');
 
-
-//HTML Responses declared here 
-var success_message = `
-<p>User Created Succesfully <a href=\"./index.html\"> click here to proceed to login</a></p>`;
-
-var failure_message = `
-<p>User created creation failed <a href=\"./register.html\"> click here to return</a></p>`;
-
-var create_election_form= `
-	<form action="./election_create.html" method="GET">
-		<input type="hidden" name="election_create" value="true"> 
-		<label for="name">Election name:</label><input type="text" id="name"><br> 
-		<label for="start_date">Polls open date:</label> <input type="date" id="start_date"><br> 
-		<label for="end_date">Polls close date:</label> <input type="date"	id="end_date"><br> 
-		<label for="nomination_date">Candiate Nomination close date:</label> <input type="date" id="nomination_end_date"><br>
-		<label for="ridings">Ridings <i>(One per line)</i>:</label><br>
-		<textarea name="ridings" cols="40" rows="10"></textarea><br>
-		<input type="submit">
-	</form>`;
-
-
 class PartyRegisterWebResponse extends WebResponse{
 	
 	constructor(page, file) {
