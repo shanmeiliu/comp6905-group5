@@ -128,9 +128,16 @@ class VoterVoteWebResponse extends WebResponse{
 		}
 		else
 		{
-			title_message = "ERROR"
-			html_message += `<p>Nothing to do here</p>`;
-			err_message += "No form data submitted";
+			title_message = "Select Active Ellection to Vote in:";
+			html_message += "<form action=\"election_vote.html\" method=\"get\">";
+			html_message += `<input type="hidden" name="election_vote" value="true">`;
+			
+			var election_list = elections.list_elections_votable();
+			for(var i = 0; i < election_list.length; i++){
+				html_message += "<input type=\"radio\" name=\"election_id\" value=\""+ election_list[i].election_id + "\">" + election_list[i].name + "</input><br/>";
+			}
+			html_message += `<input type="submit" value"submit">`;
+			html_message += "</form>";
 		}
 		
 		console.log(err_message);
