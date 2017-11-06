@@ -110,7 +110,6 @@ class RegisterPartyWebResponse extends WebResponse{
 			}
 			elections.save_JSON();
 
-
 			var template = fs.readFileSync( "./templates/template.html", 'utf8');
 			var html = `<p> Candidates Successfully Registered for upcoming election</p><P> <a href="./menu.html">Return to main menu</a></p>`;
 			

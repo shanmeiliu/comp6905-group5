@@ -154,15 +154,14 @@ class Election{
 	}	
 }
 
-/*
+
 class Vote{
-	constructor(id, Voter){
-		this.id = id;
-		this.name = name;
-		
-		this.candidates= [];
+	constructor(vote_id, username, candidate_id){
+		this.vote_id = vote_id;
+		this.username = username;
+		this.candidate_id = candidate_id;
 	}
-}*/
+}
 
 class Riding {
 	constructor(riding_id, name){
@@ -170,12 +169,22 @@ class Riding {
 		this.name = name;
 		
 		this.candidates= [];
+		this.votes = [];
 	}
 	
     add_candidate(name, party){
 		var candidate_id = keygen.generate(32);
 		this.candidates.push(new Candidate(candidate_id, name, party));
     }
+    
+    add_vote (username, candidate_id){
+		var vote_id = keygen.generate(32);
+		this.votes.push(new Vote(vote_id, username, candidate_id));
+    }
+    has_voted (username){
+    	
+    }
+    
     list_candidates(){
     	
     }

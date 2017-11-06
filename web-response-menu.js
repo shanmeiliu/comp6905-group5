@@ -79,12 +79,12 @@ class MenuWebResponse extends WebResponse{
 				
 				var tuple_list = elections.list_elections_votable();
 				for(var i = 0; i < tuple_list.length; i++){
-					html_list += "<input type=\"radio\" name=\"elections\" value=\""+ tuple_list[i].session_id + "\">" + tuple_list[i].name + "</input><br/>";
+					html_list += "<input type=\"radio\" name=\"election_id\" value=\""+ tuple_list[i].election_id + "\">" + tuple_list[i].name + "</input><br/>";
 				}
 				html_list += `<input type="submit" value"submit">`;
 				html_list += "</form>";
 				
-				template = template.replace("BODY_TEXT", "Voter");
+				template = template.replace("BODY_TEXT", html_list);
 				template = template.replace(/TITLE_TEXT/g , "Voter Main Menu");
 				
 				res.writeHead(200, {'Content-Type': 'text/html'});
@@ -103,7 +103,7 @@ class MenuWebResponse extends WebResponse{
 				
 				var tuple_list = elections.list_elections_all();
 				for(var i = 0; i < tuple_list.length; i++){
-					html_list += "<input type=\"radio\" name=\"elections\" value=\""+ tuple_list[i].session_id + "\">" + tuple_list[i].name + "</input><br/>";
+					html_list += "<input type=\"radio\" name=\"election_id\" value=\""+ tuple_list[i].election_id + "\">" + tuple_list[i].name + "</input><br/>";
 				}
 				html_list += `<input type="submit" value"Modify">`;
 				html_list += "</form>";
@@ -143,8 +143,21 @@ class MenuWebResponse extends WebResponse{
 				break;
 				
 			case 'candidate':
-				template = template.replace("BODY_TEXT", "candidate");
-				template = template.replace(/TITLE_TEXT/g , "Candidate Main Menu");
+				var html_list = "";
+				html_list += "<h2> Vote in Active Elections </h2>";
+				
+				html_list += "<form action=\"election_register_candidate.html\" method=\"get\">";
+				html_list += `<input type="hidden" name="election_register_candidate" value="true">`;
+				
+				var tuple_list = elections.list_elections_votable();
+				for(var i = 0; i < tuple_list.length; i++){
+					html_list += "<input type=\"radio\" name=\"election_id\" value=\""+ tuple_list[i].election_id + "\">" + tuple_list[i].name + "</input><br/>";
+				}
+				html_list += `<input type="submit" value"submit">`;
+				html_list += "</form>";
+				
+				template = template.replace("BODY_TEXT", html_list);
+				template = template.replace(/TITLE_TEXT/g , "Voter Main Menu");
 				
 				res.writeHead(200, {'Content-Type': 'text/html'});
 				res.write(template);
