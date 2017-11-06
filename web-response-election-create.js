@@ -18,27 +18,6 @@ const Elections = require('./elections.js');
 //function modules
 const parse_cookies = require('./parse_cookies.js');
 
-
-//HTML Responses declared here 
-var success_message = `
-<p>User Created Succesfully <a href=\"./index.html\"> click here to proceed to login</a></p>`;
-
-var failure_message = `
-<p>User created creation failed <a href=\"./register.html\"> click here to return</a></p>`;
-
-var create_election_form= `
-	<form action="./election_create.html" method="GET">
-		<input type="hidden" name="election_create" value="true"> 
-		<label for="name">Election name:</label><input type="text" id="name"><br> 
-		<label for="start_date">Polls open date:</label> <input type="date" id="start_date"><br> 
-		<label for="end_date">Polls close date:</label> <input type="date"	id="end_date"><br> 
-		<label for="nomination_date">Candiate Nomination close date:</label> <input type="date" id="nomination_end_date"><br>
-		<label for="ridings">Ridings <i>(One per line)</i>:</label><br>
-		<textarea name="ridings" cols="40" rows="10"></textarea><br>
-		<input type="submit">
-	</form>`;
-
-
 class RegistrationWebResponse extends WebResponse{
 	
 	constructor(page, file) {
@@ -66,50 +45,72 @@ class RegistrationWebResponse extends WebResponse{
 		var url_parts = url.parse(req.url, true);
 		var query = url_parts.query;
 		
+		//Response Strings
+		var html_message = "";
+		var err_message = "";
+		var title_message = "";
+		
 		if(query.election_create == "true")
 		{
-			
+			var name = query.name;
+			var start_date =query.start_date;
+			var end_date = query. end_date;
 			var elections = new Elections();
-			var election_id = elections.add_election( query.name,
-					(new Date(query.start_date)).getTime(),
-					(new Date(query.end_date)).getTime(),
-					(new Date(query.nomination_date)).getTime()	);
-			if(query.ridings.length > 0){
-				elections.get_election(election_id).bulk_add_ridings(query.ridings);
+			console.log(query);
+			
+			var nomination_date = query.nomination_date;
+			
+			if( (name == "") || (start_date == "") || (end_date == "")|| (nomination_date == "")){
+				title_message = "ERROR";
+				err_message += "Invalid form GET data for election_create";
+				html_message += "<p>Invalid form GET data for election_create</p>";	
 			}
 			else{
-				elections.get_election(election_id).add_riding("Default Riding");
-			}
-			elections.save_JSON();
+				var election_id = elections.add_election( query.name,
+						(new Date(query.start_date)).getTime(),
+						(new Date(query.end_date)).getTime(),
+						(new Date(query.nomination_date)).getTime()	);
+				
+				if(query.ridings.length > 0)
+					elections.get_election(election_id).bulk_add_ridings(query.ridings);
+				else
+					elections.get_election(election_id).add_riding("Default Riding");
+				elections.save_JSON();
 
-			var template = fs.readFileSync( "./templates/template.html", 'utf8');
-			var html = "";
-			
-			html += "<p>New election Created with the following details <br>name: " + query.name;
-			html += "<br>Start Date: " + query.start_date;
-			html += "<br>End Date: " + query.end_date;
-			html += "<br>Nomination Deadline: " + query.nomination_date;
-			html += "<br> Ridings: <br> " + query.ridings.replace(/\n/g,"<br>");
-			html += "<br><a href=\"./menu.html\" > Return to Main Menu </a>";
-						
-			template = template.replace("BODY_TEXT", html);
-			template = template.replace(/TITLE_TEXT/g , "New Election Created");
-			
-			res.writeHead(200, {'Content-Type': 'text/html'});
-			res.write(template);
-			res.end();
+				title_message = "New Election Created";
+				html_message += "<p>New election Created with the following details <br>name: " + query.name;
+				html_message += "<br>Start Date: " + query.start_date;
+				html_message += "<br>End Date: " + query.end_date;
+				html_message += "<br>Nomination Deadline: " + query.nomination_date;
+				html_message += "<br> Ridings: <br> " + query.ridings.replace(/\n/g,"<br>");
+			}
 		}
 		else
 		{
-			var template = fs.readFileSync( "./templates/template.html", 'utf8');
-
-			template = template.replace("BODY_TEXT", create_election_form);
-			template = template.replace(/TITLE_TEXT/g , "Create New Election");
-			
-			res.writeHead(200, {'Content-Type': 'text/html'});
-			res.write(template);
-			res.end();
+			title_message = "Create New Election";
+			html_message += `
+				<form action="./election_create.html" method="GET">
+					<input type="hidden" name="election_create" value="true">
+					<label for="name">Election name:</label><input type="text" name="name"><br> 
+					<label for="start_date">Polls open date:</label> <input type="date" name="start_date"><br> 
+					<label for="end_date">Polls close date:</label> <input type="date"	name="end_date"><br> 
+					<label for="nomination_date">Candiate Nomination close date:</label> <input type="date" name="nomination_date"><br>
+					<label for="ridings">Ridings <i>(One per line)</i>:</label><br>
+					<textarea name="ridings" cols="40" rows="10"></textarea><br>
+					<input type="submit">
+				</form>`;
 		}
+
+		console.log(err_message);
+		html_message += `<p><a href="./menu.html">Return to main menu</a></p>`;
+
+		var template = fs.readFileSync( "./templates/template.html", 'utf8');
+		template = template.replace("BODY_TEXT", html_message);
+		template = template.replace(/TITLE_TEXT/g , title_message);
+		
+		res.writeHead(200, {'Content-Type': 'text/html'});
+		res.write(template);
+		res.end();
 	}
 }
 
