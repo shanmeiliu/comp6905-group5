@@ -1,18 +1,15 @@
 /**
- * 
+ *  index.js
+ *  	The main HTTP Server 
  */
-
-var url = require('url'),
-http = require("http"),
-path = require("path"),
-url = require("url"),
-fs = require("fs");
-
+const  url = require('url');
+const http = require("http");
+const path = require("path");
+const url = require("url");
+const fs = require("fs")
 
 
-const hostname = '127.0.0.1';
-const port = 8080;
-
+//Local Requires
 const WebResponse = require('./web-response.js');
 const staticWebResponse = require('./web-response-static.js');
 const RegistrationWebResponse = require('./web-response-registration.js'); 
@@ -23,10 +20,12 @@ const PartyRegisterWebResponse = require('./web-response-party-register.js');
 const VoterVoteWebResponse = require('./web-response-voter-vote.js');
 const CandidateRegisterWebResponse = require('./web-response-candidate-register.js');
 
-
+//Classes
 const Accounts = require('./accounts.js');
 
-
+//Global Variables
+const hostname = '127.0.0.1';
+const port = 8080;
 var pages = [];
 
 
