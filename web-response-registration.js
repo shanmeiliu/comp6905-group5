@@ -27,7 +27,7 @@ var registration_form = `
 	<label for=\"password\">Password:</label><input type=\"password\" name=\"password\"> <br />
 	<label for=\"usertype\">Select User Type:</label><select name=\"usertype\">
 		<option value=\"voter\">Voter</option>
-		<option value=\"paty\">Party</option>
+		<option value=\"party\">Party</option>
 		<option value=\"candidate\">Candidate</option>
 		<option value=\"election_commission\">Admin</option>
 	</select><br />
@@ -67,7 +67,7 @@ class RegistrationWebResponse extends WebResponse{
 					}
 					else{
 						template = template.replace("BODY_TEXT", failure_message);
-						template = template.replace(/TITLE_TEXT/g , "Account Created Successfully");
+						template = template.replace(/TITLE_TEXT/g , "Account Creation Failed");
 					}
 					res.write(template);
 				}

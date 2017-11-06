@@ -39,7 +39,7 @@ var create_election_form= `
 	</form>`;
 
 
-class RegisterPartyWebResponse extends WebResponse{
+class PartyRegisterWebResponse extends WebResponse{
 	
 	constructor(page, file) {
 		super(page);
@@ -128,4 +128,4 @@ class RegisterPartyWebResponse extends WebResponse{
 	}
 }
 
-module.exports = RegisterPartyWebResponse;
+module.exports = PartyRegisterWebResponse;
