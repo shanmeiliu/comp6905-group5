@@ -88,43 +88,6 @@ class Election {
 		this.date_register = date_register;
 		this.election_type = election_type;
 	}
-	
-	list_ridings(){
-		var list= [];
-		for(var i = 0; i < this.ridings.length; i++){
-			list.push({ 'riding_id' : this.ridings[i].riding_id, 'name' : this.ridings[i].name });
-		}
-		return list;
-	}
-	
-	get_riding(riding_id){
-		for(var i = 0; i < this.ridings.length; i++){
-			if( this.ridings[i].riding_id == riding_id){
-				return this.ridings[i]
-			} 
-		}
-	}
-	
-	/*
-	 * add_riding
-	 *     singular adding of riding, generates a key.
-	 */
-	add_riding(name){
-		var riding_id = keygen.generate(32);
-		
-		this.ridings.push(new Riding(riding_id, name));				
-	}
-	
-	/*
-	 * bulk_add_ridings
-	 *     input assumed to be a newline separated string 
-	 */
-	bulk_add_ridings( list ){
-		var names = list.split('\n');
-		for(var i = 0; i < names.length; i++){
-			this.add_riding(names[i]);
-		}
-	}	
 }
 
 

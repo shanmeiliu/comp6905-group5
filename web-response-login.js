@@ -39,7 +39,7 @@ class LoginWebResponse extends WebResponse{
 		super(page);
 	}
 	
-	response(req, res){		
+	async response(req, res){		
 		if(req.method === "POST")
 		{
 			var body = '';
@@ -47,7 +47,7 @@ class LoginWebResponse extends WebResponse{
 				body += chunk;
 			});
 
-			req.on('end', function() {
+			req.on('end', async function() {
 				var data = qs.parse(body);
 				console.log(body);
 				
@@ -56,7 +56,7 @@ class LoginWebResponse extends WebResponse{
 				if(data.login === "true"){
 					
 					if(Accounts.check_login(data.username, data.password)){
-						var session_id = Sessions.create_session(data.username);
+						var session_id = await Sessions.create_session(data.username);
 						
 						//redirect to login page and close this reponse
 						res.setHeader('Set-Cookie', ['session_id='+session_id]);

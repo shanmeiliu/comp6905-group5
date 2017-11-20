@@ -14,6 +14,7 @@ const WebResponse = require('./web-response.js');
 const Accounts = require('./accounts.js');
 const Sessions = require('./sessions.js');
 const Elections = require('./elections.js');
+const Districts = require('./districts.js');
 
 //function modules
 const parse_cookies = require('./parse_cookies.js');
@@ -61,13 +62,13 @@ class VoterVoteWebResponse extends WebResponse{
 				html_message += "<p>Invalid form GET data for election_vote</p>";
 			}
 			else{
-				var ridings_list = elections.get_election(election_id).list_ridings();
-				
+				var district_list = await Districts.get_districts( election_id );
+				console.log(district_list);
 				title_message = "Choose Your Riding";
 				html_message += "<p> Please select the ridding you are voting for</P>";
 				html_message += "<form action=\"election_vote.html\" method=\"get\">";
-				for(var i = 0; i < ridings_list.length; i++){
-					html_message += "<input type=\"radio\" name=\"riding_id\" value=\""+ ridings_list[i].riding_id + "\">" + ridings_list[i].name + "</input><br/>";
+				for(var i = 0; i < district_list.length; i++){
+					html_message += "<input type=\"radio\" name=\"riding_id\" value=\""+ district_list[i].distict_id + "\">" + district_list[i].district_name + "</input><br/>";
 				}
 			
 				html_message += `<input type="hidden" name="election_id" value="` + election_id + `">`;
