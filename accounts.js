@@ -7,90 +7,87 @@
 const fs = require("fs");
 
 //local modules
+var MongoClient = require('mongodb').MongoClient;
+var db_url = "mongodb://localhost:27017/election";
 
 
 class Accounts{
 	constructor(){
-		this.userlist = [];
-		if (fs.existsSync("./data_store/accounts.json")) {
-			this.load_JSON();			
-		}
 	}
-	
-	create_account(username, password, type){
-		
-		for(var i = 0; i < this.userlist.length; i++){
-			if (this.userlist[i].check_username(username)){
-				console.log("User already exist: " + username);
-				return false;
-			}
-		}
-		
-		var new_account = this.create_account_helper(username, password, type);
 
-		this.userlist.push(new_account);
-		
-		this.save_JSON();
-		
-		return true;
+	create_account(username, password, type, callback){
+		MongoClient.connect(db_url, function(err, db) {
+			if (err) throw err;
+
+			db.collection("Accounts").findOne( {"username" : username.toLowerCase()} , function(err, result) {
+				if(result == null){
+					switch(type){
+					case 'voter':
+						db.collection("Accounts").insert({"username" : username.toLowerCase(), "password" : password , "type" : "voter" });	
+						break;
+					case 'election_commission':
+						db.collection("Accounts").insert({"username" : username.toLowerCase(), "password" : password , "type" : "election_commission" });
+						break;
+					case 'party':
+						db.collection("Accounts").insert({"username" : username.toLowerCase(), "password" : password , "type" : "party" });
+						break;
+					case 'candidate':
+						db.collection("Accounts").insert({"username" : username.toLowerCase(), "password" : password , "type" : "candidate" });
+						break;
+					}
+					callback(true);
+				} else {
+					callback(false);
+				}
+				db.close();
+			});
+		});
 	}
-	
-	create_account_helper(username, password, type){
-		switch(type){
-			case 'voter':
-				return new Voter(username, password);
-				break;
-			case 'election_commission':
-				return new ElectionCommission(username, password);
-				break;
-			case 'party':
-				return new Party(username, password);
-				break;
-			case 'candidate':
-				return new Candidate(username, password);
-				break;
-			default:
-				console.log("Invalid usertype: " + type);
-				return false;
-		}
+
+	check_login(username, password, callback){
+		MongoClient.connect(db_url, function(err, db) {
+			if (err) throw err;
+
+			db.collection("Accounts").findOne( { "username" : username, "password" : password } , function(err, result) {
+				if(result == null){
+					callback(false)
+				} else {
+					callback(true);
+				}
+				db.close();
+			});
+
+			db.close()
+		});
 	}
-	
-	save_JSON(){
-		fs.writeFile("./data_store/accounts.json", JSON.stringify(this.userlist), function(err) {
-		    if(err) {
-		        return console.log(err);
-		    }
-		    console.log("The file was saved!");
-		}); 
-		return JSON.stringify(this.userlist);
-	}
-	
-	load_JSON(){
-		var a = JSON.parse(fs.readFileSync( "./data_store/accounts.json", 'utf8'));
-		
-		for(var i = 0; i < a.length; i++){
-			var new_account = this.create_account_helper(a[i].username, a[i].password, a[i].type);
-			this.userlist.push(new_account);
-		}
-	}
-	
-	check_login(username, password){
-		for(var i = 0; i < this.userlist.length; i++){
-			if (this.userlist[i].check_login(username,password)){
-				return true;
-			}
-		}
-		return false;
-	}
-	
-	get_account(username){
-		for(var i = 0; i < this.userlist.length; i++){
-			if (this.userlist[i].check_username(username)){
-				return this.userlist[i];
-			}
-		}
-		console.log("Account not found")
-		return null;
+
+	get_account(username, callback){
+		MongoClient.connect(db_url, function(err, db) {
+			if (err) throw err;
+
+			db.collection("Accounts").findOne( { "username" : username } , function(err, result) {
+				if(result == null){
+					callback(false)
+				} else {
+					switch(result.type){
+					case 'voter':
+						callback(new Voter(result.username, result.password));	
+						break;
+					case 'election_commission':
+						callback(new ElectionCommission(result.username, result.password));
+						break;
+					case 'party':
+						callback(new Party(result.username, result.password));
+						break;
+					case 'candidate':
+						callback(new Candidate(result.username, result.password));
+						break;
+					}
+				}
+				db.close();
+			});
+			db.close()
+		});
 	}
 }
 
@@ -99,14 +96,14 @@ class Account{
 		this.username = username.toLowerCase();
 		this.password = password;
 	}
-	
+
 	check_login( username, password){
 		if((username.toLowerCase() === this.username) && (password === this.password)){
 			return true;
 		}
 		return false;
 	}
-	
+
 	check_username(username){
 		if(username.toLowerCase() === this.username){
 			return true;

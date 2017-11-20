@@ -23,21 +23,6 @@ class LogoutWebResponse extends WebResponse{
 	}
 	
 	response(req, res){	
-		//Redirect to login if not logged in
-		/*
-		var cookies = parse_cookies(req);
-		if( cookies.hasOwnProperty('session_id')){
-			console.log('Session ID found in cookie');
-			if(sessions.check_session(cookies.session_id)){
-				//Remove Session 
-			}else{
-				//redirect to login page and close this response
-				console.log("Session ID invalid")
-				res.writeHead(302, {'Location': './login.html'});
-				res.end();
-				return false;
-			}
-		}*/
 		
 		//redirect to login page and close this response
 		res.setHeader('Set-Cookie', ['session_id=invalid']);

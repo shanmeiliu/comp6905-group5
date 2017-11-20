@@ -2,32 +2,46 @@
  * Elections
  * 
  */
+//data base
+var MongoClient = require('mongodb').MongoClient;
+var db_url = "mongodb://localhost:27017/election";
 
 //built in modules
 const fs = require("fs");
 const keygen = require("random-key");
 
+//local modules
+const Districts = require("./districts.js");
 
 class Elections{
-	constructor(){
-		this.elections = [];
-		if (fs.existsSync("./data_store/elections.json")) {
-		    if( fs.statSync("./data_store/elections.json").size > 0 ){
-				this.load_JSON();	
-		    }			
-		}
-	}
-	
-	add_election(name, date_start, date_end, date_register){
-		
+	add_election(name, date_start, date_end, date_register, type, district_names, callback){
 		var election_id = keygen.generate(32);
-		this.elections.push(new Election(election_id, name,date_start, date_end, date_register));
-		
-		this.save_JSON();
-		
+
+		var election = {
+				'election_id':  election_id, 
+				'election_name' : name,
+				'date_start': date_start, 
+				'date_end': date_end,
+				'date_register':date_register,
+				'election_type' :type
+		};
+
+		MongoClient.connect(db_url, function(err, db) {
+			if (err) throw err;
+			db.collection("Elections").insertOne(election);
+			db.close()
+		});
+
+		var districts = new Districts();		
+		var names = district_names.split('\n');
+
+		for(var i = 0; i < names.length; i++){
+			districts.add_district( election_id, names[i]);
+		}
+
 		return election_id;
 	}
-	
+
 	get_election(election_id){
 		for(var i = 0; i < this.elections.length; i++){
 			if( this.elections[i].election_id == election_id){
@@ -35,87 +49,70 @@ class Elections{
 			} 
 		}
 	}
-	
-	list_ridings(election_id){
-		for(var i = 0; i < this.elections.length; i++){
-			if( this.elections[i].election_id == election_id){
-				return this.elections[i].list_ridings();
-			} 
-		}
+
+	list_elections_all(callback){
+		MongoClient.connect(db_url, function(err, db) {
+			if (err) throw err;
+			db.collection("Elections").find().toArray(function (err, docs) {
+		        callback(docs);
+		    });
+			db.close()
+		});		
 	}
-	
-	list_elections_all(){
-		var list = [];
-		for(var i = 0; i < this.elections.length; i++){
-			list.push({ 'election_id' : this.elections[i].election_id, 'name' : this.elections[i].name });
-		}
-		return list;
-	}
-	
-	list_elections_votable(){
+
+	list_elections_votable(callback){
 		var date = (new Date()).getTime();
-		var list = [];
-		for(var i = 0; i < this.elections.length; i++){
-			if((date > this.elections[i].date_start) && (date < this.elections[i].date_end)){
-				list.push({ 'election_id' : this.elections[i].election_id, 'name' : this.elections[i].name });	
-			}
-		}
-		return list;
+		
+		MongoClient.connect(db_url, function(err, db) {
+			if (err) throw err;
+			db.collection("Elections").find({'date_start' : {$lt: date} , 'date_end' : {$gt: date} }).toArray(function (err, docs) {
+		        callback(docs);
+		    });
+			db.close()
+		});	
 	}
-	list_elections_nominatable(){
+	
+	list_elections_party_nominatable(callback){
 		var date = (new Date()).getTime();
-		var list = [];
-		for(var i = 0; i < this.elections.length; i++){
-			if(date < this.elections[i].date_register){
-				list.push({ 'election_id' : this.elections[i].election_id, 'name' : this.elections[i].name });	
-			}
-		}
-		return list;
+		
+		MongoClient.connect(db_url, function(err, db) {
+			if (err) throw err;
+			db.collection("Elections").find({'date_register' : {$gt: date} , 'election_type' : 'parliamentary'}).toArray(function (err, docs) {
+		        callback(docs);
+		    });
+			db.close()
+		});	
 	}
 	
-	
-	//early form of persistence
-	save_JSON(){
-		fs.writeFile("./data_store/elections.json", JSON.stringify(this.elections), function(err) {
-		    if(err) {
-		        return console.log(err);
-		    }
-		    console.log("Election JSON File Updated");
-		});
-	}
-	
-	load_JSON(){
-		var a = JSON.parse(fs.readFileSync( "./data_store/elections.json", 'utf8'));
-		for(var i = 0; i < a.length; i++){
-			var election = new Election(a[i].election_id, a[i].name, a[i].date_start, a[i].date_end, a[i].date_register);
-			
-			for(var j = 0; j <  a[i].ridings.length; j++){
-				var riding = new Riding( a[i].ridings[j].riding_id, a[i].ridings[j].name);
-				riding.candidates = a[i].ridings[j].candidates;
-				election.ridings.push(riding);
-			}
-			
-			this.elections.push(election);
-		}
+	list_elections_single_nominatable(callback){
+		var date = (new Date()).getTime();
+		
+		MongoClient.connect(db_url, function(err, db) {
+			if (err) throw err;
+			db.collection("Elections").find({'date_register' : {$gt: date} , 'election_type' : 'presidential'}).toArray(function (err, docs) {
+		        callback(docs);
+		    });
+			db.close()
+		});	
 	}
 }
 
 class Election{
-	
+
 	constructor(election_id, name,date_start, date_end, date_register  ){
 		//identifier
 		this.election_id = election_id;
 		this.name = name;
-		
+
 		//unix timestamps
 		this.date_start = date_start;
 		this.date_end = date_end;
 		this.date_register = date_register;
-		
+
 		this.ridings = [];
 		this.votes = [];
 	}
-	
+
 	list_ridings(){
 		var list= [];
 		for(var i = 0; i < this.ridings.length; i++){
@@ -123,7 +120,7 @@ class Election{
 		}
 		return list;
 	}
-	
+
 	get_riding(riding_id){
 		for(var i = 0; i < this.ridings.length; i++){
 			if( this.ridings[i].riding_id == riding_id){
@@ -131,17 +128,17 @@ class Election{
 			} 
 		}
 	}
-	
+
 	/*
 	 * add_riding
 	 *     singular adding of riding, generates a key.
 	 */
 	add_riding(name){
 		var riding_id = keygen.generate(32);
-		
+
 		this.ridings.push(new Riding(riding_id, name));				
 	}
-	
+
 	/*
 	 * bulk_add_ridings
 	 *     input assumed to be a newline separated string 
@@ -151,9 +148,16 @@ class Election{
 		for(var i = 0; i < names.length; i++){
 			this.add_riding(names[i]);
 		}
-	}	
+	}
 }
 
+class PredientialElection extends Election{
+
+}
+
+class ParliamentaryElection extends Election{
+
+}
 
 class Vote{
 	constructor(vote_id, username, candidate_id){
@@ -163,44 +167,40 @@ class Vote{
 	}
 }
 
+
+
 class Riding {
 	constructor(riding_id, name){
 		this.riding_id = riding_id;
 		this.name = name;
-		
+
 		this.candidates= [];
 		this.votes = [];
 	}
-	
-    add_candidate(name, party){
+
+	add_candidate(name, party){
 		var candidate_id = keygen.generate(32);
 		this.candidates.push(new Candidate(candidate_id, name, party));
-    }
-    
-    add_vote (username, candidate_id){
+	}
+
+	add_vote (username, candidate_id){
 		var vote_id = keygen.generate(32);
 		this.votes.push(new Vote(vote_id, username, candidate_id));
-    }
-    has_voted (username){
-    	
-    }
-    
-    list_candidates(){
-    	
-    }
-    
-    display_results(){
-    	
-    }
-}
+	}
+	has_voted (username){
 
-class Candidate{
-	constructor(candidate_id, name, party){
-		this.candidate_id = candidate_id;
-		this.name = name;
-		this.party = party;
+	}
+
+	list_candidates(){
+
+	}
+
+	display_results(){
+
 	}
 }
+
+
 
 
 //var bob = new Elections();

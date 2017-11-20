@@ -55,33 +55,27 @@ class LoginWebResponse extends WebResponse{
 				var template = fs.readFileSync( "./templates/template.html", 'utf8');
 				if(data.login === "true"){
 					var accounts = new Accounts();
-
-					if(accounts.check_login(data.username, data.password)){
-						var sessions = new Sessions();
-						var session_id = sessions.create_session(data.username);
-						
-						//redirect to login page and close this reponse
-						res.setHeader('Set-Cookie', ['session_id='+session_id]);
-						res.writeHead(302, {'Location': './menu.html'});
-						res.end();
-						
-						return;
-/*						res.setHeader('Set-Cookie', ['session_id='+session_id]);
-						res.writeHead(200, {'Content-Type': 'text/html'});
-						template = template.replace("BODY_TEXT", success_message);
-						template = template.replace(/TITLE_TEXT/g , "Create New Account");*/
-					}
-					else{
-						res.writeHead(200, {'Content-Type': 'text/html'});
-						template = template.replace("BODY_TEXT", failure_message+login_form);
-						template = template.replace(/TITLE_TEXT/g , "Log Into System");
-						res.write(template);
-						res.end();
-						
-						return;
-					}
+					accounts.check_login(data.username, data.password, function(login_pass){
+						if(login_pass){
+							var sessions = new Sessions();
+							var session_id = sessions.create_session(data.username);
+							
+							//redirect to login page and close this reponse
+							res.setHeader('Set-Cookie', ['session_id='+session_id]);
+							res.writeHead(302, {'Location': './menu.html'});
+							res.end();
+						} else {
+							res.writeHead(200, {'Content-Type': 'text/html'});
+							
+							template = template.replace("BODY_TEXT", failure_message+login_form);
+							template = template.replace(/TITLE_TEXT/g , "Log Into System");
+							
+							res.write(template);
+							res.end();
+						}	
+					});
+					return;
 				}
-				
 				res.writeHead(302, {'Location': './login.html'});
 				res.end();
 			});

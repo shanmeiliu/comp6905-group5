@@ -56,44 +56,50 @@ class RegistrationWebResponse extends WebResponse{
 				var template = fs.readFileSync( "./templates/template.html", 'utf8');
 				var html_message = "";
 				var err_message = "";
-				var title_message = "";
-				
+				var title_message = "";				
 						
-				if(data.register === "true"){
-					var username = data.username;
-					var password = data.password;
-					
-					if( (username == "") || (password == "") ){
+				if(data.register === "true"){					
+					if( (data.username == "") || (data.password == "") ){
 						title_message = "ERROR";
 						err_message += "Invalid form GET data for register";
-						html_message += "<p>Invalid form GET data for register</p>";						
+						html_message += "<p>Invalid form GET data for register</p>";
+						
+						console.log(err_message);
+						html_message += `<p><a href="./menu.html">Return to main menu</a></p>`;
+						
+						template = template.replace("BODY_TEXT", html_message);
+						template = template.replace(/TITLE_TEXT/g , title_message);
+						
+						res.writeHead(200, {'Content-Type': 'text/html'});
+						res.write(template);
+						res.end();						
 					}
 					else{						
 						console.log("Registration attempted for user " + data.username);
 						var accounts = new Accounts();
-
-						if (accounts.create_account(data.username,data.password,data.usertype)){
-							title_message = "Account Created Successfully";
-							html_message +=`<p>User Created Succesfully</p>`;
-						}
-						else{
-							title_message = "ERROR";
-							err_message += "User already exists";
-							html_message += "<p>User already exists</p>";
-						}						
-					}					
-					console.log(err_message);
-					html_message += `<p><a href="./menu.html">Return to main menu</a></p>`;
-					
-					template = template.replace("BODY_TEXT", html_message);
-					template = template.replace(/TITLE_TEXT/g , title_message);
-					
-					res.writeHead(200, {'Content-Type': 'text/html'});
-					res.write(template);
-					res.end();
-					
+						accounts.create_account( data.username, data.password, data.usertype, function(account_created){
+							if (account_created){
+								title_message = "Account Created Successfully";
+								html_message +=`<p>User Created Succesfully</p>`;
+							}
+							else{
+								title_message = "ERROR";
+								err_message += "User already exists";
+								html_message += "<p>User already exists</p>";
+							}
+							
+							console.log(err_message);
+							html_message += `<p><a href="./menu.html">Return to main menu</a></p>`;
+							
+							template = template.replace("BODY_TEXT", html_message);
+							template = template.replace(/TITLE_TEXT/g , title_message);
+							
+							res.writeHead(200, {'Content-Type': 'text/html'});
+							res.write(template);
+							res.end();
+						});					
+					}
 				}
-				res.end();
 			});
 		}
 		else
