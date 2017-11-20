@@ -15,10 +15,7 @@ const keygen = require("random-key");
 
 
 class Sessions{
-	constructor(){
-	}
-	
-	create_session(username){
+	static async create_session(username){
 		var session_id = keygen.generate(32);
 		var firstDay = new Date();
 		var nextWeek = new Date(firstDay.getTime() + 7 * 24 * 60 * 60 * 1000);
@@ -41,7 +38,7 @@ class Sessions{
 	 *  	Checks if session id is valid considering the context
 	 *  	only removes expired session if session id is matching
 	 */
-	async check_session( session_id ){
+	static async check_session( session_id ){
 		var db = await MongoClient.connect(db_url);
 		var session = await db.collection("Sessions").findOne( {"session_id" : session_id} )
 		if(session == null){
@@ -66,7 +63,7 @@ class Sessions{
 	 *  	Assumes you have confirmed session before search
 	 *  	does not check if session has expired
 	 */
-	async get_session_user ( session_id ){
+	static async get_session_user ( session_id ){
 		var db = await MongoClient.connect(db_url);
 		var session = await db.collection("Sessions").findOne( {"session_id" : session_id} )
 
@@ -81,6 +78,14 @@ class Sessions{
 
 		db.close();
 		return new Session(session);
+	}
+	
+	static async remove_session ( session_id ){
+		
+		var db = await MongoClient.connect(db_url);
+		await db.collection("Sessions").remove( {"session_id" : session_id} )
+		db.close();
+		return;
 	}
 }
 

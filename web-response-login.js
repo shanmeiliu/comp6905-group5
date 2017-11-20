@@ -54,11 +54,9 @@ class LoginWebResponse extends WebResponse{
 
 				var template = fs.readFileSync( "./templates/template.html", 'utf8');
 				if(data.login === "true"){
-					var accounts = new Accounts();
-
-					if(accounts.check_login(data.username, data.password)){
-						var sessions = new Sessions();
-						var session_id = sessions.create_session(data.username);
+					
+					if(Accounts.check_login(data.username, data.password)){
+						var session_id = Sessions.create_session(data.username);
 						
 						//redirect to login page and close this reponse
 						res.setHeader('Set-Cookie', ['session_id='+session_id]);

@@ -22,22 +22,24 @@ class LogoutWebResponse extends WebResponse{
 		super(page);
 	}
 	
-	response(req, res){	
-		//Redirect to login if not logged in
-		/*
+	async response(req, res){		
+		//Redirect to login if not logged i
 		var cookies = parse_cookies(req);
+		
 		if( cookies.hasOwnProperty('session_id')){
-			console.log('Session ID found in cookie');
-			if(sessions.check_session(cookies.session_id)){
-				//Remove Session 
-			}else{
+			//confirm there is an open session
+			var check = await Sessions.check_session( cookies.session_id );  
+			if(!check){
 				//redirect to login page and close this response
 				console.log("Session ID invalid")
 				res.writeHead(302, {'Location': './login.html'});
 				res.end();
 				return false;
+			} else {
+				//removes it
+				await Sessions.remove_session( cookies.session_id );	
 			}
-		}*/
+		}
 		
 		//redirect to login page and close this response
 		res.setHeader('Set-Cookie', ['session_id=invalid']);

@@ -25,14 +25,12 @@ class RegistrationWebResponse extends WebResponse{
 	}
 	
 	async response(req, res){	
-		var sessions = new Sessions();
-		
 		//Redirect to login if not logged i
 		var cookies = parse_cookies(req);		
 		if( cookies.hasOwnProperty('session_id')){
 			console.log('Session ID found in cookie');
-			var check = await sessions.check_session(cookies.session_id);  
-			//console.log(check);
+			
+			var check = await Sessions.check_session(cookies.session_id);  
 			if(!check){
 				//redirect to login page and close this response
 				console.log("Session ID invalid")
@@ -70,14 +68,10 @@ class RegistrationWebResponse extends WebResponse{
 				var election_id = elections.add_election( query.name,
 						(new Date(query.start_date)).getTime(),
 						(new Date(query.end_date)).getTime(),
-						(new Date(query.nomination_date)).getTime()	);
+						(new Date(query.nomination_date)).getTime(),
+						query.type,
+						query.districts);
 				
-				if(query.ridings.length > 0)
-					elections.get_election(election_id).bulk_add_ridings(query.ridings);
-				else
-					elections.get_election(election_id).add_riding("Default Riding");
-				elections.save_JSON();
-
 				title_message = "New Election Created";
 				html_message += "<p>New election Created with the following details <br>name: " + query.name;
 				html_message += "<br>Start Date: " + query.start_date;
@@ -89,17 +83,7 @@ class RegistrationWebResponse extends WebResponse{
 		else
 		{
 			title_message = "Create New Election";
-			html_message += `
-				<form action="./election_create.html" method="GET">
-					<input type="hidden" name="election_create" value="true">
-					<label for="name">Election name:</label><input type="text" name="name"><br> 
-					<label for="start_date">Polls open date:</label> <input type="date" name="start_date"><br> 
-					<label for="end_date">Polls close date:</label> <input type="date"	name="end_date"><br> 
-					<label for="nomination_date">Candiate Nomination close date:</label> <input type="date" name="nomination_date"><br>
-					<label for="ridings">Ridings <i>(One per line)</i>:</label><br>
-					<textarea name="ridings" cols="40" rows="10"></textarea><br>
-					<input type="submit">
-				</form>`;
+			html_message += require('./web-form-election-create.js');
 		}
 
 		console.log(err_message);

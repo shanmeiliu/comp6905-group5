@@ -26,14 +26,13 @@ class PartyRegisterWebResponse extends WebResponse{
 	
 	async response(req, res){	
 		var elections = new Elections();
-		var sessions = new Sessions();
 		
 		//Redirect to login if not logged i
 		var cookies = parse_cookies(req);		
 		if( cookies.hasOwnProperty('session_id')){
 			console.log('Session ID found in cookie');
-			var check = await sessions.check_session(cookies.session_id);  
-			//console.log(check);
+			
+			var check = await Sessions.check_session(cookies.session_id);  
 			if(!check){
 				//redirect to login page and close this response
 				console.log("Session ID invalid")
@@ -90,8 +89,7 @@ class PartyRegisterWebResponse extends WebResponse{
 				
 				var ridings_list = elections.get_election(election_id).list_ridings();	
 	
-				var accounts = new Accounts();
-				var account = accounts.get_account(sessions.get_session_user(session_id));
+				var account = Accounts.get_account(Sessions.get_session_user(session_id));
 				
 				for(var i = 0; i < ridings_list.length; i++){				
 					if( query[ridings_list[i].riding_id] ){

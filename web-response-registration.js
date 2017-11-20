@@ -70,8 +70,7 @@ class RegistrationWebResponse extends WebResponse{
 					}
 					else{						
 						console.log("Registration attempted for user " + data.username);
-						var accounts = new Accounts();
-						var is_account_created = await accounts.create_account(data.username,data.password,data.usertype);
+						var is_account_created = await Accounts.create_account(data.username,data.password,data.usertype);
 						if ( is_account_created ){
 							title_message = "Account Created Successfully";
 							html_message +=`<p>User Created Succesfully</p>`;

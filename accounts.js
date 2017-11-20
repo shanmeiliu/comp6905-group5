@@ -18,7 +18,7 @@ class Accounts{
 	constructor(){
 	}
 	
-	async create_account(username, password, type){
+	static async create_account(username, password, type){
 
 		var db = await MongoClient.connect(db_url);
 		var result = await db.collection("Accounts").findOne( { "username" : username } );
@@ -35,12 +35,10 @@ class Accounts{
 			
 			db.close();
 			return true;	
-		}
-		
-		
+		}		
 	}
 	
-	create_account_helper(username, password, type){
+	static create_account_helper(username, password, type){
 		switch(type){
 			case 'voter':
 				return new Voter(username, password);
@@ -60,7 +58,7 @@ class Accounts{
 		}
 	}
 	
-	async check_login(username, password){
+	static async check_login(username, password){
 		var db = await MongoClient.connect(db_url);
 		var result = await db.collection("Accounts").findOne( { "username" : username, "password" : password } );
 
@@ -73,7 +71,7 @@ class Accounts{
 		}
 	}
 	
-	async get_account(username){
+	static async get_account(username){
 		var db = await MongoClient.connect(db_url);
 		var result = await db.collection("Accounts").findOne( { "username" : username } );
 
