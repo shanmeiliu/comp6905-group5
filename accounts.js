@@ -3,6 +3,11 @@
  * 		extends Web Response
  * 
  */
+
+//Database information
+var MongoClient = require('mongodb').MongoClient;
+var db_url = "mongodb://localhost:27017/election";
+
 //built in modules
 const fs = require("fs");
 

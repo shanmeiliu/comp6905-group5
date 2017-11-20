@@ -45,20 +45,18 @@ class MenuWebResponse extends WebResponse{
 		super(page);
 	}
 	
-	response(req, res){
-		var sessions = new Sessions();
+	async response(req, res){
 		var accounts = new Accounts();
 		var elections = new Elections();
+		var sessions = new Sessions();
 		
-		var account;
-		
-		var cookies = parse_cookies(req);
-		
+		//Redirect to login if not logged i
+		var cookies = parse_cookies(req);		
 		if( cookies.hasOwnProperty('session_id')){
 			console.log('Session ID found in cookie');
-			if(sessions.check_session(cookies.session_id)){
-				console.log("Session ID valid")
-			}else{
+			var check = await sessions.check_session(cookies.session_id);  
+			//console.log(check);
+			if(!check){
 				//redirect to login page and close this response
 				console.log("Session ID invalid")
 				res.writeHead(302, {'Location': './login.html'});
@@ -66,8 +64,13 @@ class MenuWebResponse extends WebResponse{
 				return false;
 			}
 		}
-		account = accounts.get_account(sessions.get_session_user(cookies.session_id));
+
+		var username = await sessions.get_session_user( cookies.session_id );
+		var account = accounts.get_account(username);
+		
+		
 		var template = fs.readFileSync( "./templates/template.html", 'utf8');
+		
 		var title_message = "";
 		var html_message = "";
 		var err_message = "";

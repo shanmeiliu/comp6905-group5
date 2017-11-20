@@ -24,15 +24,16 @@ class RegistrationWebResponse extends WebResponse{
 		super(page);
 	}
 	
-	response(req, res){	
+	async response(req, res){	
 		var sessions = new Sessions();
-		//Redirect to login if not logged in
-		var cookies = parse_cookies(req);
+		
+		//Redirect to login if not logged i
+		var cookies = parse_cookies(req);		
 		if( cookies.hasOwnProperty('session_id')){
 			console.log('Session ID found in cookie');
-			if(sessions.check_session(cookies.session_id)){
-				console.log("Session ID valid")
-			}else{
+			var check = await sessions.check_session(cookies.session_id);  
+			//console.log(check);
+			if(!check){
 				//redirect to login page and close this response
 				console.log("Session ID invalid")
 				res.writeHead(302, {'Location': './login.html'});

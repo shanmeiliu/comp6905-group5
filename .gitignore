@@ -60,3 +60,5 @@ typings/
 data_store/accounts.json
 data_store/elections.json
 data_store/sessions.json
+
+db/*
