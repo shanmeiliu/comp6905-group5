@@ -44,6 +44,11 @@ class Sessions{
 	async check_session( session_id ){
 		var db = await MongoClient.connect(db_url);
 		var session = await db.collection("Sessions").findOne( {"session_id" : session_id} )
+		if(session == null){
+			db.close();
+			return false;
+		}
+		
 		var date = (new Date()).getTime();
 
 		if(date < session.expires){

@@ -41,7 +41,7 @@ class RegistrationWebResponse extends WebResponse{
 		super(page);
 	}
 	
-	response(req, res){		
+	async response(req, res){		
 		if(req.method === "POST")
 		{
 			var body = '';
@@ -49,7 +49,7 @@ class RegistrationWebResponse extends WebResponse{
 				body += chunk;
 			});
 
-			req.on('end', function() {
+			req.on('end', async function() {
 				var data = qs.parse(body);
 				
 				//Response Strings
@@ -71,8 +71,8 @@ class RegistrationWebResponse extends WebResponse{
 					else{						
 						console.log("Registration attempted for user " + data.username);
 						var accounts = new Accounts();
-
-						if (accounts.create_account(data.username,data.password,data.usertype)){
+						var is_account_created = await accounts.create_account(data.username,data.password,data.usertype);
+						if ( is_account_created ){
 							title_message = "Account Created Successfully";
 							html_message +=`<p>User Created Succesfully</p>`;
 						}

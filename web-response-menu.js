@@ -66,7 +66,7 @@ class MenuWebResponse extends WebResponse{
 		}
 
 		var username = await sessions.get_session_user( cookies.session_id );
-		var account = accounts.get_account(username);
+		var account = await accounts.get_account(username);
 		
 		
 		var template = fs.readFileSync( "./templates/template.html", 'utf8');

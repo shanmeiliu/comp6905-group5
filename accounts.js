@@ -16,28 +16,28 @@ const fs = require("fs");
 
 class Accounts{
 	constructor(){
-		this.userlist = [];
-		if (fs.existsSync("./data_store/accounts.json")) {
-			this.load_JSON();			
-		}
 	}
 	
-	create_account(username, password, type){
+	async create_account(username, password, type){
+
+		var db = await MongoClient.connect(db_url);
+		var result = await db.collection("Accounts").findOne( { "username" : username } );
 		
-		for(var i = 0; i < this.userlist.length; i++){
-			if (this.userlist[i].check_username(username)){
-				console.log("User already exist: " + username);
-				return false;
-			}
+		if (result != null){
+			console.log("User already exist: " + username);
+			
+			db.close();
+			return false;
+		} else {
+			var new_account = this.create_account_helper(username, password, type);
+			await db.collection("Accounts").insertOne( new_account );
+			this.userlist.push(new_account);
+			
+			db.close();
+			return true;	
 		}
 		
-		var new_account = this.create_account_helper(username, password, type);
-
-		this.userlist.push(new_account);
 		
-		this.save_JSON();
-		
-		return true;
 	}
 	
 	create_account_helper(username, password, type){
@@ -60,42 +60,30 @@ class Accounts{
 		}
 	}
 	
-	save_JSON(){
-		fs.writeFile("./data_store/accounts.json", JSON.stringify(this.userlist), function(err) {
-		    if(err) {
-		        return console.log(err);
-		    }
-		    console.log("The file was saved!");
-		}); 
-		return JSON.stringify(this.userlist);
-	}
-	
-	load_JSON(){
-		var a = JSON.parse(fs.readFileSync( "./data_store/accounts.json", 'utf8'));
-		
-		for(var i = 0; i < a.length; i++){
-			var new_account = this.create_account_helper(a[i].username, a[i].password, a[i].type);
-			this.userlist.push(new_account);
+	async check_login(username, password){
+		var db = await MongoClient.connect(db_url);
+		var result = await db.collection("Accounts").findOne( { "username" : username, "password" : password } );
+
+		if(result == null){
+			db.close();
+			return false;
+		} else {
+			db.close();
+			return true;
 		}
 	}
 	
-	check_login(username, password){
-		for(var i = 0; i < this.userlist.length; i++){
-			if (this.userlist[i].check_login(username,password)){
-				return true;
-			}
+	async get_account(username){
+		var db = await MongoClient.connect(db_url);
+		var result = await db.collection("Accounts").findOne( { "username" : username } );
+
+		if(result == null){
+			db.close();
+			return null;
+		} else {
+			db.close();
+			return this.create_account_helper(result.username, result.password, result.type);
 		}
-		return false;
-	}
-	
-	get_account(username){
-		for(var i = 0; i < this.userlist.length; i++){
-			if (this.userlist[i].check_username(username)){
-				return this.userlist[i];
-			}
-		}
-		console.log("Account not found")
-		return null;
 	}
 }
 
