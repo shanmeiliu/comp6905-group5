@@ -10,8 +10,4 @@ const Election = require('./election.js');
 const Districts = require('./districts.js');
 const Candidates = require('./candidates.js');
 
-
-
-
 module.exports = ParlimentaryElection;
-

@@ -9,7 +9,4 @@ const keygen = require("random-key");
 const Election = require('./election.js'); 
 const Districts = require('./districts.js');
 
-
-
 module.exports = PresidentialElection;
-

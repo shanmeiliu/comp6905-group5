@@ -6,7 +6,7 @@ var db_url = "mongodb://localhost:27017/election";
 const keygen = require("random-key");
 
 //Local Libraries 
-//const ParlimentaryElection = require('./parlimentary_election.js');
+//const ParlimentaryElection = require('./parliamentary_election.js');
 //const PresidentialElection = require('./presidential_election.js');
 
 const Districts = require('./districts.js');
@@ -70,8 +70,6 @@ class ParliamentaryElection extends Election {
 		var candidates = await Candidates.get_candidates_by_district ( this.election_id, district_id );
 		return candidates; 
 	}
-	
-
 }
 
 class PresidentialElection extends Election {
