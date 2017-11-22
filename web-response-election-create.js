@@ -54,7 +54,6 @@ class RegistrationWebResponse extends WebResponse{
 			var name = query.name;
 			var start_date =query.start_date;
 			var end_date = query. end_date;
-			var elections = new Elections();
 			console.log(query);
 			
 			var nomination_date = query.nomination_date;
@@ -65,19 +64,26 @@ class RegistrationWebResponse extends WebResponse{
 				html_message += "<p>Invalid form GET data for election_create</p>";	
 			}
 			else{
-				var election_id = elections.add_election( query.name,
+				var election_id = await Elections.add_election( query.name,
 						(new Date(query.start_date)).getTime(),
 						(new Date(query.end_date)).getTime(),
 						(new Date(query.nomination_date)).getTime(),
-						query.type,
-						query.districts);
+						query.election_type);
+				
+				if(query.election_type == 'parliamentary'){
+					var election = await  Elections.get_election( election_id );
+					election.add_districts( query.districts );
+				}
 				
 				title_message = "New Election Created";
 				html_message += "<p>New election Created with the following details <br>name: " + query.name;
 				html_message += "<br>Start Date: " + query.start_date;
 				html_message += "<br>End Date: " + query.end_date;
 				html_message += "<br>Nomination Deadline: " + query.nomination_date;
-				html_message += "<br> Ridings: <br> " + query.ridings.replace(/\n/g,"<br>");
+				
+				if(query.election_type == 'parliamentary'){
+					html_message += "<br> Ridings: <br> " + query.districts.replace(/\n/g,"<br>");
+				}
 			}
 		}
 		else

@@ -32,10 +32,7 @@ class MenuWebResponse extends WebResponse{
 		super(page);
 	}
 	
-	async response(req, res){
-		var elections = new Elections();
-
-		
+	async response(req, res){		
 		//Redirect to login if not logged i
 		var cookies = parse_cookies(req);		
 		if( cookies.hasOwnProperty('session_id')){
@@ -68,7 +65,7 @@ class MenuWebResponse extends WebResponse{
 				html_message += "<form action=\"election_vote.html\" method=\"get\">";
 				html_message += `<input type="hidden" name="election_vote" value="true">`;
 				
-				var tuple_list = await elections.list_elections_votable();
+				var tuple_list = await Elections.list_elections_votable();
 				for(var i = 0; i < tuple_list.length; i++){
 					html_message += "<input type=\"radio\" name=\"election_id\" value=\""+ tuple_list[i].election_id + "\">" + tuple_list[i].election_name + "</input><br/>";
 				}
@@ -83,7 +80,7 @@ class MenuWebResponse extends WebResponse{
 				html_message += "<form action=\"election_modify.html\" method=\"get\">";
 				html_message += `<input type="hidden" name="modify_election" value="true">`;
 				
-				var tuple_list = await elections.list_elections_all();
+				var tuple_list = await Elections.list_elections_all();
 				for(var i = 0; i < tuple_list.length; i++){
 					html_message += "<input type=\"radio\" name=\"election_id\" value=\""+ tuple_list[i].election_id + "\">" + tuple_list[i].election_name + "</input><br/>";
 				}
@@ -100,7 +97,7 @@ class MenuWebResponse extends WebResponse{
 				
 				html_message += "<form action=\"nominate_party.html\" method=\"get\">";
 				
-				var tuple_list = await elections.list_elections_party_nominatable();
+				var tuple_list = await Elections.list_elections_party_nominatable();
 				for(var i = 0; i < tuple_list.length; i++){
 					html_message += "<input type=\"radio\" name=\"election_id\" value=\""+ tuple_list[i].election_id + "\">" + tuple_list[i].election_name + "</input><br/>";
 				}
@@ -116,7 +113,7 @@ class MenuWebResponse extends WebResponse{
 				html_message += "<form action=\"election_register_candidate.html\" method=\"get\">";
 				html_message += `<input type="hidden" name="election_register_candidate" value="true">`;
 				
-				var tuple_list = await elections.list_elections_candidate_nominatable();
+				var tuple_list = await Elections.list_elections_candidate_nominatable();
 				for(var i = 0; i < tuple_list.length; i++){
 					html_message += "<input type=\"radio\" name=\"election_id\" value=\""+ tuple_list[i].election_id + "\">" + tuple_list[i].election_name + "</input><br/>";
 				}

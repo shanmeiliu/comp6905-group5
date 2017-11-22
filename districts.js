@@ -19,13 +19,19 @@ class Districts{
 		return district_id;
 	}
 	
+	static add_districts( election_id, district_list){
+		var district_names = district_list.split('\n');
+		for(var i = 0; i < district_names.length; i++){
+			Districts.add_district( election_id, district_names[i] );
+		}
+	}
+	
 	static async get_districts( election_id ){
 		var db = await MongoClient.connect(db_url);
 		var districts = await db.collection("Districts").find( {'election_id' : election_id} ).toArray();
 		db.close();
 		
 		return districts;
-
 	}
 }
 
@@ -35,6 +41,5 @@ class District{
 		this.election_id = election_id;
 		this.district_name = district_name;
 	}
-	
 }
 module.exports = Districts;

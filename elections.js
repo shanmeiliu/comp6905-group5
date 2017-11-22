@@ -11,133 +11,62 @@ const fs = require("fs");
 const keygen = require("random-key");
 
 //local modules
-const Districts = require('./districts.js');
+const Election = require('./election.js'); 
 
-class Elections{
-	constructor(){
-	}
-	
-	async add_election( election_id, election_name, date_start, date_end, date_register, election_type, districts){
+const Districts = require('./districts.js');
+const Candidates = require('./candidates.js');
+
+class Elections{	
+	static async add_election( election_name, date_start, date_end, date_register, election_type){
 		var election_id = keygen.generate(32);
-		var election = new Election( election_id, election_name, date_start, date_end, date_register, election_type)
+		var election = { 
+			'election_id' : election_id, 
+			'election_name' : election_name, 
+			'date_start' : date_start, 
+			'date_end' : date_end, 
+			'date_register' : date_register, 
+			'election_type' : election_type
+		}
 		
 		var db = await MongoClient.connect(db_url);
 		var session = await db.collection("Elections").insertOne(election);
 		db.close();
-		
-		/*var district = 
-		
-		if(query.ridings.length > 0)
-			elections.get_election(election_id).bulk_add_ridings(query.ridings);
-		else
-			elections.get_election(election_id).add_riding("Default Riding");
-		*/
+
 		return election_id;
 	}
 	
-	async get_election(election_id){
-		var db = await MongoClient.connect(db_url);
-		var election = await db.collection("Elections").findOne( { 'election_id' : election_id } );
-		db.close();
-		
-		return new Election( 	election.election_id, 
-								election.election_name, 
-								election.date_start, 
-								election.date_end, 
-								election.date_register, 
-								election.election_type);
+	static async get_election(election_id){
+		var election = await Election.init( election_id );
+		return election;
 	}
 		
-	async list_elections_all(){
+	static async list_elections_all(){
 		var db = await MongoClient.connect(db_url);
 		var list = await db.collection("Elections").find().toArray();
 		return list;
 	}
 	
-	async list_elections_votable(){
+	static async list_elections_votable(){
 		var date = (new Date()).getTime();
 		var db = await MongoClient.connect(db_url);
 		var list = await db.collection("Elections").find( {'date_start' : {$lt: date} , 'date_end' : {$gt: date} } ).toArray();
 		return list;
 	}
 	
-	async list_elections_party_nominatable(){
+	static async list_elections_party_nominatable(){
 		var date = (new Date()).getTime();
 		var db = await MongoClient.connect(db_url);
 		var list = await db.collection("Elections").find( {'date_register' : {$gt: date} , 'election_type' : 'parliamentary'} ).toArray();
 		return list;
 	}
 	
-	async list_elections_candidate_nominatable(){
+	static async list_elections_candidate_nominatable(){
 		var date = (new Date()).getTime();
 		var db = await MongoClient.connect(db_url);
 		var list = await db.collection("Elections").find( {'date_register' : {$gt: date} , 'election_type' : 'presidential'} ).toArray();
 		return list;
 	}	
 }
-
-class Election {
-	constructor( election_id, election_name, date_start, date_end, date_register, election_type){
-		//identifier
-		this.election_id = election_id;
-		this.election_name = election_name;
-		
-		//unix timestamps
-		this.date_start = date_start;
-		this.date_end = date_end;
-		this.date_register = date_register;
-		this.election_type = election_type;
-	}
-}
-
-
-class Vote{
-	constructor(vote_id, username, candidate_id){
-		this.vote_id = vote_id;
-		this.username = username;
-		this.candidate_id = candidate_id;
-	}
-}
-
-class Riding {
-	constructor(riding_id, name){
-		this.riding_id = riding_id;
-		this.name = name;
-		
-		this.candidates= [];
-		this.votes = [];
-	}
-	
-    add_candidate(name, party){
-		var candidate_id = keygen.generate(32);
-		this.candidates.push(new Candidate(candidate_id, name, party));
-    }
-    
-    add_vote (username, candidate_id){
-		var vote_id = keygen.generate(32);
-		this.votes.push(new Vote(vote_id, username, candidate_id));
-    }
-    has_voted (username){
-    	
-    }
-    
-    list_candidates(){
-    	
-    }
-    
-    display_results(){
-    	
-    }
-}
-
-class Candidate{
-	constructor(candidate_id, name, party){
-		this.candidate_id = candidate_id;
-		this.name = name;
-		this.party = party;
-	}
-}
-
 
 //var bob = new Elections();
 

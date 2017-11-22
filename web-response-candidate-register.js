@@ -24,9 +24,7 @@ class CandidateRegisterWebResponse extends WebResponse{
 		super(page);
 	}
 	
-	async response(req, res){	
-		var elections = new Elections();
-		
+	async response(req, res){			
 		//Redirect to login if not logged i
 		var cookies = parse_cookies(req);		
 		if( cookies.hasOwnProperty('session_id')){
@@ -61,33 +59,29 @@ class CandidateRegisterWebResponse extends WebResponse{
 				html_message += "<p>Invalid form GET data for election_register_candidate</p>";
 			}
 			else{
-				var ridings_list = elections.get_election(election_id).list_ridings();
-
-				title_message = "Choose Your Riding";
+				var election = await Elections.get_election( election_id );
+				
+				title_message = "Confirm your Candidacy";
 				html_message += "<form action=\"election_register_candidate.html\" method=\"get\">";
-				for(var i = 0; i < ridings_list.length; i++){
-					html_message += "<input type=\"radio\" name=\"riding_id\" value=\""+ ridings_list[i].riding_id + "\">" + ridings_list[i].name + "</input><br/>";
-				}
+				html_message += `<label for="candidate_name">Please type your name as you want it to appear on our ballot </label><input type="text" name="candidate_name" value=>`;
 				html_message += `<input type="hidden" name="election_id" value="` + election_id + `">`;
-				html_message += `<input type="hidden" name="election_register_candidate_riding" value="true">`;
+				html_message += `<input type="hidden" name="election_register_candidate_confirm" value="true">`;
 				html_message += `<input type="submit" value"Submit">`;
 				html_message += "</form>";
 			}
 		}
-		else if (query.election_register_candidate_riding == "true"){
+		else if (query.election_register_candidate_confirm == "true"){
 			var election_id = query.election_id;	
-			var riding_id = query.riding_id;
 			var session_id = cookies.session_id;
-			if( (election_id == null) || (riding_id == null) || (session_id == null) ){
+			if( (election_id == null) || (session_id == null) ){
 				title_message = "ERROR"
 				err_message += "Invalid form GET data for election_register_candidate_riding";
 				html_message += "<p>Invalid form GET data for election_register_candidate_riding</P>";
 			}
 			else{
-				var account = Accounts.get_account(Sessions.get_session_user(session_id));
+				var election = await Elections.get_election( election_id );
 				
-				elections.get_election(election_id).get_riding(riding_id).add_candidate( account.username, "Independant" );
-				elections.save_JSON();
+				election = election.add_candidate(query.candidate_name, Sessions.get_session_user(session_id));
 				
 				title_message = "Registered as a Canadidate";
 				html_message += `<p> Thank you for Registering for the upcoming election</p></p>`;
