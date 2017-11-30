@@ -4,23 +4,24 @@ body{
 	font-family: 		sans-serif;
 }
 
-body, html {
-  height:100%;
-}
-
 #body2{
 	display: block;
-	width: 60%; margin-right: auto; margin-left: auto;
-  height:100%;
-  margin-top: 30px;
-  margin-bottom: 30px;
+	margin-top: 0;
+	
+	width: 60%; 
+	margin-right: auto; 
+	margin-left: auto;
+  	
 	background-color: white ;
 	text-align: left;
+	
+	border-radius: 15px;
+	-moz-border-radius: 15px;
 }
 
 #body3{
 	display: block;
-  margin: 30px 30px 30px 30px;
+	margin: 30px 30px 30px 30px;
 	text-align: left;
 }
 

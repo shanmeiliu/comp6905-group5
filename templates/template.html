@@ -5,11 +5,70 @@
 <title>Everybody Votes - TITLE_TEXT</title>
 </head>
 
+<style type="text/css">
+div.button
+{
+	width:120px;
+	padding: 30px;
+	margin: 10px;
+	border: 2px solid #000;
+	border-radius: 15px;
+	-moz-border-radius: 15px;
+	text-align: center;
+	color: white;
+	background-color: black;
+}
+div.button:hover
+{
+	width:120px;
+	padding: 30px;
+	margin: 10px;
+	border: 2px solid #000;
+	border-radius: 15px;
+	-moz-border-radius: 15px;
+	text-align: center;
+	color: black;
+	background-color: white;
+}
+
+div.buttonbar{
+	display: flex;
+ 	margin-left: auto;
+ 	margin-right: auto;	 
+}
+
+div.header{
+	width:100%;
+	display: block;
+  	margin-left: auto;
+  	margin-right: auto;
+  
+	padding-top: 30px;
+	padding-bottom: 30px;
+	
+	margin: 0px;
+	border-radius: 15px;
+	-moz-border-radius: 15px;
+	text-align: center;
+	color: white;
+	background-color: black;
+}
+</style>
+
+
+
 <body>
 	<div id=body2>
+	<div class="header"> <h1> Super Votes, Elections Online</h1></div>
 		<div id=body3>
 			<h1>TITLE_TEXT</h1>
 			BODY_TEXT
+		</div>
+		<div class='buttonbar'>
+			<div class='button' onclick='document.cookie="session_id=voter1"; window.location.href = "./menu.html";'> Voter </div>			
+			<div class='button' onclick='document.cookie="session_id=party1"; window.location.href = "./menu.html";'> Party </div>
+			<div class='button' onclick='document.cookie="session_id=candidate1"; window.location.href = "./menu.html";'> Candidate </div>
+			<div class='button' onclick='document.cookie="session_id=admin1"; window.location.href = "./menu.html";'> Election Commission </div>
 		</div>
 	</div>
 </body>
