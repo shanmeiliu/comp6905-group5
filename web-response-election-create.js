@@ -76,15 +76,14 @@ class RegistrationWebResponse extends WebResponse{
 				if(query.election_type == 'parliamentary'){
 					var election = await  Elections.get_election( election_id );
 					election.add_districts( query.districts );
+					election.add_threshold( query.threshold );
 				}
 				
 				if(query.election_type == 'presidential'){
 					var election = await  Elections.get_election( election_id );
 					election.set_round_end((new Date( query.poll_1_end_date )).getTime());
 				}
-				
-
-				
+								
 				if(query.election_type == 'parliamentary'){
 					title_message = "New Election Created";
 					html_message += "<p>New election Created with the following details <br>name: " + name;

@@ -152,10 +152,12 @@ class VoterVoteWebResponse extends WebResponse{
 				html_message += "<p>Invalid form GET data for election_vote_riding_voted</P>";
 			}
 			else{
-				var account = Accounts.get_account(Sessions.get_session_user(cookies.session_id));
-				
-				//elections.get_election(election_id).get_riding(riding_id).add_vote(account.username, candidate_id);
-				//elections.save_JSON();
+				var username = await Sessions.get_session_user(cookies.session_id);
+				var election = await Elections.get_election(election_id);
+				//console.log( district_id );
+				//console.log( candidate_id );
+				//console.log( username );
+				await election.vote( district_id, candidate_id, username )
 				
 				title_message = "Voting succeeded"
 				html_message += `<p> Thank you for voting in the upcoming election</p>`;

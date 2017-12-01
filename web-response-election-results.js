@@ -120,8 +120,49 @@ class ElectionResultsWebResponse extends WebResponse{
 				else if (election.election_type == 'parliamentary'){
 					var result = await election.tabulate_results();
 					title_message = `Result for election '${election.database_object.election_name}'`;
+					
+					html_message +=`
+					<table>
+						<tr>
+							<th>Party Name</th>
+							<th>Totals</th>
+							<th>Percent</th>
+							<th>Seats Earned</th>
+						</tr>`;
+					
+					for( var i = 0; i < result.party_list.length; i++){
+						html_message +=`
+						<tr>
+							<td>${result.party_list[i].party_name}</td>
+							<td>${result.party_list[i].party_count}</td>
+							<td>${result.party_list[i].party_percent}</td>
+							<td>${result.party_list[i].party_seats}</td>
+							
+						</tr>`;
+					}
+					html_message +=`</table>`;
+					
+					html_message += `<p> The parliments will be made up of; `;
+					if(result.thresholded_party_list.length  > 1){
+						for( var i = 0; i < result.thresholded_party_list.length - 1; i++){
+							html_message += `${result.thresholded_party_list[i].seats} seats from ${result.thresholded_party_list[i].party_name}, `;
+						}
+						html_message += `and ${result.thresholded_party_list[result.thresholded_party_list.length - 1].seats} seats from ${result.thresholded_party_list[result.thresholded_party_list.length - 1].party_name}`;	
+					}
+					else{
+						html_message += `${result.thresholded_party_list[0].seats} seats from ${result.thresholded_party_list[0].party_name}, `;
+					}
+					
+					for( var i = 0; i < result.thresholded_party_list.length; i++){
+						html_message += `<p>${result.party_list[i].party_name} has selected;<ul>`;
+						for( var j = 0; j < result.thresholded_party_list[i].winners.length; j++){
+							html_message += `<li>${result.thresholded_party_list[i].winners[j].candidate_name} </li>`;
+							
+							
+						}	
+						html_message += `</ul>`;
+					}
 				}
-				
 			}
 		}
 		

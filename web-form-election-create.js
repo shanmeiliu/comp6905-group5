@@ -40,6 +40,7 @@ var html = `
 			<label for="nomination_date">Nomination end date:</label> <input type="date" name="nomination_date"><br>
 			<label for="districts">Districts <i>(One per line)</i>:</label><br>
 			<textarea name="districts" cols="40" rows="10"></textarea><br>
+			<label for="name">Threshhold:</label><input type="text" name="threshold"><br> 
 			<input type="submit">
 		</form>
 	</div>

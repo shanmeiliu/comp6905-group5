@@ -53,9 +53,6 @@ pages.push( new VoterVoteWebResponse("./election_vote.html"));
 pages.push( new CandidateRegisterWebResponse("./election_register_candidate.html"));
 
 
-
-
-
 const server = http.createServer((req, res) => {
 	var q = url.parse(req.url, true);
 	var filename = "." + q.pathname;

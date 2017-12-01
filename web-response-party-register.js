@@ -16,6 +16,7 @@ const Sessions = require('./sessions.js');
 const Elections = require('./elections.js');
 const Election = require('./election.js');
 const Districts = require('./districts.js');
+const Candidates = require('./candidates.js');
 
 //function modules
 const parse_cookies = require('./parse_cookies.js');
@@ -41,6 +42,14 @@ class PartyRegisterWebResponse extends WebResponse{
 				return false;
 			}
 		}
+		else{
+			//redirect to login page and close this response
+			console.log("No Session ID Found")
+			res.writeHead(302, {'Location': './login.html'});
+			res.end();
+			return false;
+		}
+		var username = await Sessions.get_session_user( cookies.session_id );
 		
 		//Parse GET variables
 		var url_parts = url.parse(req.url, true);
@@ -64,17 +73,19 @@ class PartyRegisterWebResponse extends WebResponse{
 			else{
 				var election = await Elections.get_election( election_id );
 				var district_list = await election.get_districts();
+				var nominees = await Candidates.get_candidates_by_party(election_id, username);
 				
 				title_message = "Register your Candidates";
 				html_message +=  "<p> Please enter the names of your candidates in the listed ridings please leave blank any places you have no one running";
-				html_message += "<form action=\"nominate_party.html\" method=\"get\">";
+				html_message += `<form action="nominate_party.html" method="get">`;
+				
 				for(var i = 0; i < district_list.length; i++){
-					html_message += "<label for= \"" + district_list[i].district_id + "\">"+ district_list[i].district_name + " :</label><input type=\"text=\" name=\"" + district_list[i].district_id + "\"> <br> \n";
+					html_message += `<label for="${ district_list[i].district_id}"> ${district_list[i].district_name} :</label><input type="text" name="${district_list[i].district_id }"> <label for="${ district_list[i].district_id}-priority"> Rank :</label><input type="text" name="${district_list[i].district_id}-priority"><br> \n`;
 				}
-				html_message += `<input type="hidden" name="election_id" value="` + election_id + `">`;
+				html_message += `<input type="hidden" name="election_id" value="${election_id}">`;
 				html_message += `<input type="hidden" name="nominate_party_list" value="true">`;
 				html_message += `<input type="submit" value"Submit">`;
-				html_message += "</form>";
+				html_message += `</form>`;
 			}
 		}
 		else if (query.nominate_party_list == "true"){			
@@ -95,7 +106,8 @@ class PartyRegisterWebResponse extends WebResponse{
 				
 				for(var i = 0; i < district_list.length; i++){				
 					if( query[district_list[i].district_id] ){
-						election.add_candidate( district_list[i].district_id, query[district_list[i].district_id], account.username );
+						//console.log(query[district_list[i].district_id+"-priority"]);
+						election.add_candidate( district_list[i].district_id, query[district_list[i].district_id], account.username, query[district_list[i].district_id+"-priority"]);
 					}	
 				}
 

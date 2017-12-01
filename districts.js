@@ -36,6 +36,15 @@ class Districts{
 		
 		return districts;
 	}
+	
+	static async get_district( election_id , district_id ){
+		var db = await MongoClient.connect(db_url);
+		var district = await db.collection("Districts").findOne( {'election_id' : election_id, 'district_id' : district_id} );
+		db.close();
+		
+		//console.log(district);
+		return district;
+	}
 }
 
 class District{
