@@ -15,5 +15,9 @@
   "bugs": {
     "url": "https://github.com/tordre/comp6905-group5/issues"
   },
-  "homepage": "https://github.com/tordre/comp6905-group5#readme"
+  "homepage": "https://github.com/tordre/comp6905-group5#readme",
+  "dependencies": {
+    "mongodb": "^2.2.33",
+    "random-key": "^0.3.2"
+  }
 }

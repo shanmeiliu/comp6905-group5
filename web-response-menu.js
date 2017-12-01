@@ -47,6 +47,13 @@ class MenuWebResponse extends WebResponse{
 				return false;
 			}
 		}
+		else{
+			//redirect to login page and close this response
+			console.log("No Session ID Found")
+			res.writeHead(302, {'Location': './login.html'});
+			res.end();
+			return false;
+		}
 
 		var username = await Sessions.get_session_user( cookies.session_id );
 		var account = await Accounts.get_account(username);
@@ -65,7 +72,7 @@ class MenuWebResponse extends WebResponse{
 				html_message += "<form action=\"election_vote.html\" method=\"get\">";
 				html_message += `<input type="hidden" name="election_vote" value="true">`;
 				
-				var tuple_list = await Elections.list_elections_votable();
+				var tuple_list = await Elections.list_elections_all();
 				for(var i = 0; i < tuple_list.length; i++){
 					html_message += "<input type=\"radio\" name=\"election_id\" value=\""+ tuple_list[i].election_id + "\">" + tuple_list[i].election_name + "</input><br/>";
 				}
@@ -77,8 +84,8 @@ class MenuWebResponse extends WebResponse{
 				title_message = "Election Commission Main Menu";
 				
 				html_message += "<h2> View Results of Elections </h2>";
-				html_message += "<form action=\"election_modify.html\" method=\"get\">";
-				html_message += `<input type="hidden" name="modify_election" value="true">`;
+				html_message += "<form action=\"election_results.html\" method=\"get\">";
+				html_message += `<input type="hidden" name="election_results" value="true">`;
 				
 				var tuple_list = await Elections.list_elections_all();
 				for(var i = 0; i < tuple_list.length; i++){

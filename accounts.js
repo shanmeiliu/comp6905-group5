@@ -6,7 +6,8 @@
 
 //Database information
 var MongoClient = require('mongodb').MongoClient;
-var db_url = "mongodb://localhost:27017/election";
+const config = require('./configuration.js');
+var db_url = config.database.url;
 
 //built in modules
 const fs = require("fs");
@@ -30,9 +31,7 @@ class Accounts{
 			return false;
 		} else {
 			var new_account = this.create_account_helper(username, password, type);
-			await db.collection("Accounts").insertOne( new_account );
-			this.userlist.push(new_account);
-			
+			await db.collection("Accounts").insertOne( new_account );			
 			db.close();
 			return true;	
 		}		

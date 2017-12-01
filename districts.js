@@ -1,6 +1,7 @@
 //Database information
 var MongoClient = require('mongodb').MongoClient;
-var db_url = "mongodb://localhost:27017/election";
+const config = require('./configuration.js');
+var db_url = config.database.url;
 
 //Global Libraries
 const keygen = require("random-key");
@@ -22,7 +23,9 @@ class Districts{
 	static add_districts( election_id, district_list){
 		var district_names = district_list.split('\n');
 		for(var i = 0; i < district_names.length; i++){
-			Districts.add_district( election_id, district_names[i] );
+			if( district_names[i] != '' ){
+				Districts.add_district( election_id, district_names[i] );	
+			}
 		}
 	}
 	

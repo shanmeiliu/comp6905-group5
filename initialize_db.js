@@ -1,5 +1,6 @@
 var MongoClient = require('mongodb').MongoClient;
-var db_url = "mongodb://localhost:27017/election";
+const config = require('./configuration.js');
+var db_url = config.database.url;
 
 const Accounts = require('./accounts.js');
 const Sessions = require('./sessions.js');
@@ -10,33 +11,41 @@ MongoClient.connect(db_url, function(err, db) {
 	db.createCollection("Accounts", function(err, res) {
 		if (err) throw err;
 		console.log("Collection created!");
+		db.close();
+
 	});
 
 	db.createCollection("Sessions", function(err, res) {
 		if (err) throw err;
 		console.log("Collection created!");
+	    db.close();
+
 	});
 	
 	db.createCollection("Elections", function(err, res) {
 		if (err) throw err;
-		console.log("Collection created!");
+		console.log("Collection created!");    db.close();
+
 	});
 	
 	db.createCollection("Votes", function(err, res) {
 		if (err) throw err;
-		console.log("Collection created!");
+		console.log("Collection created!");    db.close();
+
 	});
 	
 	db.createCollection("Districts", function(err, res) {
 		if (err) throw err;
-		console.log("Collection created!");
+		console.log("Collection created!");    db.close();
+
 	});
 	
 	db.collection("Accounts").createIndex( {username:1} , {unique:true, background:false, w:1} );
-
 	db.collection("Elections").createIndex( {election_id:1} , {unique:true, background:false, w:1} );
 	db.collection("Sessions").createIndex( {session_id:1} , {unique:true, background:false, w:1} );
 	db.collection("Districts").createIndex( {district_id:1} , {unique:true, background:false, w:1} );
+    db.close();
+
 	
 });
 

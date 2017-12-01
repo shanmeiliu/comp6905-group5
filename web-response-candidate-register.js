@@ -80,8 +80,9 @@ class CandidateRegisterWebResponse extends WebResponse{
 			}
 			else{
 				var election = await Elections.get_election( election_id );
+				var username = await Sessions.get_session_user( session_id );
 				
-				election = election.add_candidate(query.candidate_name, Sessions.get_session_user(session_id));
+				election = election.add_candidate( query.candidate_name, username);
 				
 				title_message = "Registered as a Canadidate";
 				html_message += `<p> Thank you for Registering for the upcoming election</p></p>`;

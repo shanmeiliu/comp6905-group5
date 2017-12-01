@@ -53,10 +53,13 @@ class RegistrationWebResponse extends WebResponse{
 		{
 			var name = query.name;
 			var start_date =query.start_date;
-			var end_date = query. end_date;
-			console.log(query);
-			
+			var end_date = query.poll_2_end_date;
 			var nomination_date = query.nomination_date;
+
+			console.log(name);
+			console.log(start_date);
+			console.log(end_date);
+			console.log(nomination_date);
 			
 			if( (name == "") || (start_date == "") || (end_date == "")|| (nomination_date == "")){
 				title_message = "ERROR";
@@ -64,10 +67,10 @@ class RegistrationWebResponse extends WebResponse{
 				html_message += "<p>Invalid form GET data for election_create</p>";	
 			}
 			else{
-				var election_id = await Elections.add_election( query.name,
-						(new Date(query.start_date)).getTime(),
-						(new Date(query.end_date)).getTime(),
-						(new Date(query.nomination_date)).getTime(),
+				var election_id = await Elections.add_election( name,
+						(new Date( start_date )).getTime(),
+						(new Date( end_date )).getTime(),
+						(new Date( nomination_date )).getTime(),
 						query.election_type);
 				
 				if(query.election_type == 'parliamentary'){
@@ -75,14 +78,29 @@ class RegistrationWebResponse extends WebResponse{
 					election.add_districts( query.districts );
 				}
 				
-				title_message = "New Election Created";
-				html_message += "<p>New election Created with the following details <br>name: " + query.name;
-				html_message += "<br>Start Date: " + query.start_date;
-				html_message += "<br>End Date: " + query.end_date;
-				html_message += "<br>Nomination Deadline: " + query.nomination_date;
+				if(query.election_type == 'presidential'){
+					var election = await  Elections.get_election( election_id );
+					election.set_round_end((new Date( query.poll_1_end_date )).getTime());
+				}
+				
+
 				
 				if(query.election_type == 'parliamentary'){
-					html_message += "<br> Ridings: <br> " + query.districts.replace(/\n/g,"<br>");
+					title_message = "New Election Created";
+					html_message += "<p>New election Created with the following details <br>name: " + name;
+					html_message += "<br>Start Date: " + start_date;
+					html_message += "<br>End Date: " + end_date;
+					html_message += "<br>Nomination Deadline: " + nomination_date;
+					html_message += "<br> Districts: <br> " + query.districts.replace(/\n/g,"<br>");
+				}
+				
+				if(query.election_type == 'presidential'){
+					title_message = "New Election Created";
+					html_message += "<p>New election Created with the following details <br>name: " + name;
+					html_message += "<br>Start Date: " + start_date;
+					html_message += "<br>Round 1 end Date: " + end_date;
+					html_message += "<br>Round 2 end Date: " + query.poll_2_end_date;
+					html_message += "<br>Nomination Deadline: " + nomination_date;
 				}
 			}
 		}
