@@ -136,7 +136,7 @@ class MenuWebResponse extends WebResponse{
 		}
 
 		console.log(err_message);
-		html_message += `<p><a href="./logout.html">Logout from System</a></p>`;
+		//html_message += `<p><a href="./logout.html">Logout from System</a></p>`;
 		
 		template = template.replace("BODY_TEXT", html_message);
 		template = template.replace(/TITLE_TEXT/g , title_message);

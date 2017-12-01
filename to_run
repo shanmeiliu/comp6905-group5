@@ -1,0 +1,2 @@
+screen ./mongodb-linux-x86_64-ubuntu1604-3.4.10/bin/mongod --dbpath comp6905-group5/db --port 23346
+screen ../

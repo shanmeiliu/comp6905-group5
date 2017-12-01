@@ -7,7 +7,7 @@ config.database.name = 'election';
 config.database.url = "mongodb://" + config.database.host + ":" + config.database.port + "/"+ config.database.name;
 
 config.web = {};
-config.web.hostname = 'localhost'; 
+config.web.hostname = 'excalibur.cs.mun.ca'; 
 config.web.port = 3346;
 
 module.exports = config;
